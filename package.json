@@ -66,8 +66,5 @@
     "is-woff2": "^1.0.0",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0"
-  },
-  "publishConfig": {
-    "@highcanfly-club:registry": "https://npm.pkg.github.com"
   }
 }
