@@ -44,12 +44,39 @@ fontminify.run(function (err, files) {
 You can use [gulp-rename](https://github.com/hparra/gulp-rename) to rename your files:
 
 ```js
-var Fontimify = require('fontminify');
+var Fontimify = require('@sctg/fontminify');
 var rename = require('gulp-rename');
 
 var fontminify = new Fontimify()
     .src('fonts/big.ttf')
     .use(rename('small.ttf'));
+```
+
+Sample asynchronous Typescript  
+```ts
+import Fontminify from '@sctg/fontminify'
+import stream from 'stream'
+import gulp from 'gulp'
+function convertTTF2WEB(srcPath: string, dstPath: string): Promise<FontminifyFile[]> {
+    return new Promise<FontminifyFile[]>((resolve, reject) => {
+        const fontmin = new Fontminify()
+            .src(srcPath + '/*.ttf')
+            .dest(dstPath + '/')
+            .use(Fontminify.ttf2woff())
+            .use(Fontminify.ttf2woff2())
+            .use(Fontminify.css({
+                fontPath: srcPath + '/',
+            }));
+
+        fontmin.run((err: Error, files: FontminifyFile[], stream) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(files)
+            }
+        })
+    })
+}
 ```
 
 ## API
