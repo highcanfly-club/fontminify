@@ -1,10 +1,4 @@
 
-<p align="center">
-    <a href="http://ecomfe.github.io/fontminify/">
-        <img height="128" width="128" src="https://raw.githubusercontent.com/ecomfe/fontminify/master/fontminify.png">
-    </a>
-</p>
-
 # fontminify (just a minimal change to [original](https://github.com/ecomfe/fontmin))
 **Minify font seamlessly**
 
