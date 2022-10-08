@@ -1,8 +1,9 @@
 {
-  "name": "@highcanfly-club/fontminify",
-  "version": "1.0.1",
+  "name": "@sctg/fontminify",
+  "version": "1.0.0",
   "description": "Minify font seamlessly, font subsetter, webfont (eot, woff, svg) converter.",
   "main": "index.js",
+  "private": false,
   "keywords": [
     "font",
     "webfont",
@@ -28,7 +29,10 @@
   ],
   "author": "junmer",
   "license": "MIT",
-  "repository": "highcanfly-club/fontminify",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/highcanfly-club/fontminify.git"
+  },
   "engines": {
     "node": ">=8"
   },
@@ -66,5 +70,13 @@
     "is-woff2": "^1.0.0",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0"
+  },
+  "bugs": {
+    "url": "https://github.com/highcanfly-club/fontminify/issues"
+  },
+  "homepage": "https://github.com/highcanfly-club/fontminify#readme",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
   }
 }
