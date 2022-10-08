@@ -44,19 +44,19 @@ fontminify.run(function (err, files) {
 You can use [gulp-rename](https://github.com/hparra/gulp-rename) to rename your files:
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 var rename = require('gulp-rename');
 
-var fontminify = new Fontiminy()
+var fontminify = new Fontimify()
     .src('fonts/big.ttf')
     .use(rename('small.ttf'));
 ```
 
 ## API
 
-### new Fontiminy()
+### new Fontimify()
 
-Creates a new `Fontiminy` instance.
+Creates a new `Fontimify` instance.
 
 ### .src(file)
 
@@ -108,10 +108,10 @@ The following plugins are bundled with fontminify:
 Compress ttf by glyph.
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
-    .use(Fontiminy.glyph({ 
+var fontminify = new Fontimify()
+    .use(Fontimify.glyph({ 
         text: '天地玄黄 宇宙洪荒',
         hinting: false         // keep ttf hint info (fpgm, prep, cvt). default = true
     }));
@@ -122,10 +122,10 @@ var fontminify = new Fontiminy()
 Convert ttf to eot.
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
-    .use(Fontiminy.ttf2eot());
+var fontminify = new Fontimify()
+    .use(Fontimify.ttf2eot());
 ```
 
 ### .ttf2woff()
@@ -133,10 +133,10 @@ var fontminify = new Fontiminy()
 Convert ttf to woff.
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
-    .use(Fontiminy.ttf2woff({
+var fontminify = new Fontimify()
+    .use(Fontimify.ttf2woff({
         deflate: true           // deflate woff. default = false
     }));
 ```
@@ -146,10 +146,10 @@ var fontminify = new Fontiminy()
 Convert ttf to woff2.
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
-    .use(Fontiminy.ttf2woff2());
+var fontminify = new Fontimify()
+    .use(Fontimify.ttf2woff2());
 ```
 
 ### .ttf2svg()
@@ -159,11 +159,11 @@ Convert ttf to svg.
 you can use [imagemin-svgo](https://github.com/imagemin/imagemin-svgo) to compress svg:
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 var svgo = require('imagemin-svgo');
 
-var fontminify = new Fontiminy()
-    .use(Fontiminy.ttf2svg())
+var fontminify = new Fontimify()
+    .use(Fontimify.ttf2svg())
     .use(svgo());
 
 ```
@@ -173,10 +173,10 @@ var fontminify = new Fontiminy()
 Generate css from ttf, often used to make iconfont.
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
-    .use(Fontiminy.css({
+var fontminify = new Fontimify()
+    .use(Fontimify.css({
         fontPath: './',         // location of font file 
         base64: true,           // inject base64 data:application/x-font-ttf; (gzip font with css). 
                                 // default = false
@@ -191,10 +191,10 @@ var fontminify = new Fontiminy()
 
 Alternatively, a transform function can be passed as `fontFamily` option.
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
-    .use(Fontiminy.css({
+var fontminify = new Fontimify()
+    .use(Fontimify.css({
         // ...
         fontFamily: function(fontInfo, ttf) {
           return "Transformed Font Family Name"
@@ -208,11 +208,11 @@ var fontminify = new Fontiminy()
 Convert font format svg to ttf.
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
+var fontminify = new Fontimify()
     .src('font.svg')
-    .use(Fontiminy.svg2ttf());
+    .use(Fontimify.svg2ttf());
 ```
 
 ### .svgs2ttf()
@@ -222,12 +222,12 @@ Concat svg files to a ttf, just like css sprite.
 awesome work with [css](#css) plugin:
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
+var fontminify = new Fontimify()
     .src('svgs/*.svg')
-    .use(Fontiminy.svgs2ttf('font.ttf', {fontName: 'iconfont'}))
-    .use(Fontiminy.css({
+    .use(Fontimify.svgs2ttf('font.ttf', {fontName: 'iconfont'}))
+    .use(Fontimify.css({
         glyph: true
     }));
 ```
@@ -237,11 +237,11 @@ var fontminify = new Fontiminy()
 Convert otf to ttf.
 
 ```js
-var Fontiminy = require('fontminify');
+var Fontimify = require('fontminify');
 
-var fontminify = new Fontiminy()
+var fontminify = new Fontimify()
     .src('fonts/*.otf')
-    .use(Fontiminy.otf2ttf());
+    .use(Fontimify.otf2ttf());
 ```
 
 ## CLI
