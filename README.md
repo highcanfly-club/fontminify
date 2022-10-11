@@ -136,9 +136,9 @@ The following plugins are bundled with fontminify:
 Compress ttf by glyph.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.glyph({ 
         text: '天地玄黄 宇宙洪荒',
         hinting: false         // keep ttf hint info (fpgm, prep, cvt). default = true
@@ -150,9 +150,9 @@ var fontminify = new Fontimify()
 Convert ttf to eot.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2eot());
 ```
 
@@ -161,9 +161,9 @@ var fontminify = new Fontimify()
 Convert ttf to woff.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2woff({
         deflate: true           // deflate woff. default = false
     }));
@@ -174,9 +174,9 @@ var fontminify = new Fontimify()
 Convert ttf to woff2.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2woff2());
 ```
 
@@ -187,10 +187,10 @@ Convert ttf to svg.
 you can use [imagemin-svgo](https://github.com/imagemin/imagemin-svgo) to compress svg:
 
 ```js
-var Fontimify = require('fontminify');
-var svgo = require('imagemin-svgo');
+import svgo from 'imagemin-svgo'
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2svg())
     .use(svgo());
 
@@ -201,9 +201,9 @@ var fontminify = new Fontimify()
 Generate css from ttf, often used to make iconfont.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.css({
         fontPath: './',         // location of font file 
         base64: true,           // inject base64 data:application/x-font-ttf; (gzip font with css). 
@@ -219,9 +219,9 @@ var fontminify = new Fontimify()
 
 Alternatively, a transform function can be passed as `fontFamily` option.
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.css({
         // ...
         fontFamily: function(fontInfo, ttf) {
@@ -236,9 +236,9 @@ var fontminify = new Fontimify()
 Convert font format svg to ttf.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .src('font.svg')
     .use(Fontimify.svg2ttf());
 ```
@@ -250,9 +250,9 @@ Concat svg files to a ttf, just like css sprite.
 awesome work with [css](#css) plugin:
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .src('svgs/*.svg')
     .use(Fontimify.svgs2ttf('font.ttf', {fontName: 'iconfont'}))
     .use(Fontimify.css({
@@ -265,9 +265,9 @@ var fontminify = new Fontimify()
 Convert otf to ttf.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .src('fonts/*.otf')
     .use(Fontimify.otf2ttf());
 ```
