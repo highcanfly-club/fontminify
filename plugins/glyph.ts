@@ -62,7 +62,7 @@ function minifyFontObject(ttfObject, subset, plugin) {
     ttf.setGlyf(getSubsetGlyfs(ttf, subset));
 
     // use plugin
-    if (_.isFunction(plugin)) {
+    if (typeof plugin === "function") {
         plugin(ttf);
     }
 

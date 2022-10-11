@@ -7,7 +7,8 @@
     "strictFunctionTypes": true,
     "declaration": true,
     "noEmit": false,
-    "noEmitOnError": false
+    "noEmitOnError": false,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules", "**/node_modules/*"]
 }

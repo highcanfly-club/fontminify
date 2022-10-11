@@ -4,11 +4,12 @@
  */
 
 import combine from "stream-combiner";
-import stream, { Transform }  from "stream";
+import * as stream from "stream";
+import { Transform } from "stream";
 import concat from "concat-stream";
 import { EventEmitter } from "events";
 import bufferToVinyl from "buffer-to-vinyl";
-import vfs from "vinyl-fs";
+import * as Vfs from "vinyl-fs";
 import _css from "./plugins/css.js";
 import _glyph from "./plugins/glyph.js";
 import _otf2ttf from "./plugins/otf2ttf.js";
@@ -26,8 +27,18 @@ import {
   getSubsetText as _getSubsetText,
   string2unicodes as _string2unicodes,
 } from "./lib/util.js";
-
-type FontminifyPlugin = Function | stream.Transform;
+const vfs = (Vfs as any).default;
+type FontminifyPlugin =
+  | typeof Fontminify.css
+  | typeof Fontminify.glyph
+  | typeof Fontminify.otf2ttf
+  | typeof Fontminify.svg2ttf
+  | typeof Fontminify.svgs2ttf
+  | typeof Fontminify.ttf2eot
+  | typeof Fontminify.ttf2svg
+  | typeof Fontminify.ttf2woff
+  | typeof Fontminify.ttf2woff2
+  | stream.Transform;
 type ProbableAsSrc = string[] | string | Buffer;
 
 export interface PluginCloneOption {
@@ -57,10 +68,11 @@ export interface PluginFromSVGOption extends PluginHintOption {
 export interface FontInfo {
   fontFile: string;
   fontPath: string;
-  base64: boolean;
+  base64: boolean|string;
   glyph: boolean;
   iconPrefix: string;
   local: boolean;
+  fontFamily?:string;
 }
 
 export interface CssOption {
@@ -82,11 +94,10 @@ export interface GlyphOption {
   use?: FontminifyPlugin;
 }
 
-
 /**
  * Initialize Fontminify
  */
-class Fontminify<SrcType extends ProbableAsSrc>  extends EventEmitter {
+class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
   streams: stream[];
   _src: any;
   _dest: any;
@@ -133,11 +144,13 @@ class Fontminify<SrcType extends ProbableAsSrc>  extends EventEmitter {
   /**
    * Optimize files
    */
-  run(cb: (
-    err: Error,
-    files: Array<{ _contents: stream.Readable }>,
-    stream: any
-  ) => void):stream {
+  run(
+    cb: (
+      err: Error,
+      files: Array<{ _contents: stream.Readable }>,
+      stream: any
+    ) => void
+  ): stream {
     cb = cb || (() => {});
 
     const stream = this.createStream();
@@ -187,22 +200,33 @@ class Fontminify<SrcType extends ProbableAsSrc>  extends EventEmitter {
     return vfs.src(...this.src());
   }
   static glyph = (opts: GlyphOption): stream.Transform => _glyph(opts);
-  static ttf2eot = (opts?: PluginCloneOption): stream.Transform => _ttf2eot(opts);
-  static ttf2woff = (opts?: PluginCloneOption): stream.Transform => _ttf2woff(opts);
-  static ttf2woff2 = (opts?: PluginCloneOption): stream.Transform => _ttf2woff2(opts);
-  static ttf2svg = (opts?: PluginCloneOption): stream.Transform => _ttf2svg(opts);
+  static ttf2eot = (opts?: PluginCloneOption): stream.Transform =>
+    _ttf2eot(opts);
+  static ttf2woff = (opts?: PluginCloneOption): stream.Transform =>
+    _ttf2woff(opts);
+  static ttf2woff2 = (opts?: PluginCloneOption): stream.Transform =>
+    _ttf2woff2(opts);
+  static ttf2svg = (opts?: PluginCloneOption): stream.Transform =>
+    _ttf2svg(opts);
   static css = (opts?: CssOption): stream.Transform => _css(opts);
-  static svg2ttf = (opts?: PluginCloneOption & PluginHintOption): stream.Transform => _svg2ttf(opts);
-  static svgs2ttf = (file: string, opts?: PluginFromSVGOption): stream.Transform => _svgs2ttf(file,opts);
-  static otf2ttf = (opts?: PluginCloneOption & PluginHintOption): stream.Transform => _otf2ttf(opts);
+  static svg2ttf = (
+    opts?: PluginCloneOption & PluginHintOption
+  ): stream.Transform => _svg2ttf(opts);
+  static svgs2ttf = (
+    file: string,
+    opts?: PluginFromSVGOption
+  ): stream.Transform => _svgs2ttf(file, opts);
+  static otf2ttf = (
+    opts?: PluginCloneOption & PluginHintOption
+  ): stream.Transform => _otf2ttf(opts);
 
   static util = {
     getFontFolder: () => _getFontFolder(),
     getFonts: () => _getFonts(),
-    getPureText: (str:string) => _getPureText(str),
-    getUniqText: (str:string) => _getUniqText(str),
+    getPureText: (str: string) => _getPureText(str),
+    getUniqText: (str: string) => _getUniqText(str),
     getSubsetText: (opts) => _getSubsetText(opts),
-    string2unicodes: (str:string) => _string2unicodes(str),
+    string2unicodes: (str: string) => _string2unicodes(str),
   };
   static plugins = [
     "glyph",
@@ -231,4 +255,3 @@ class Fontminify<SrcType extends ProbableAsSrc>  extends EventEmitter {
  * Module exports
  */
 export default Fontminify;
-

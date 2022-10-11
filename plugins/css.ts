@@ -13,9 +13,15 @@ import through from "through2";
 import replaceExt from "replace-ext";
 import {b2a} from "b3b";
 import {fileURLToPath} from 'url';
-import type { CssOption } from "../index.js";
+import type { CssOption, FontInfo } from "../index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+type Glyph = {
+  code: string,
+  codeName: string,
+  name: string,
+}
 /**
  * listUnicode
  *
@@ -37,7 +43,7 @@ function listUnicode(unicode) {
  * @return {Object} icon obj
  */
 function getGlyfList(ttf) {
-  const glyfList = [];
+  const glyfList = [] as Glyph[];
 
   // exclude empty glyf
   const filtered = ttf.glyf.filter(g => {
@@ -139,11 +145,11 @@ export default (opts?: CssOption) => {
       const fontInfo = {
         fontFile: fontFile,
         fontPath: "",
-        base64: "",
+        base64: false,
         glyph: false,
         iconPrefix: "icon",
         local: false,
-      };
+      } as FontInfo;
 
       // opts
       _.extend(fontInfo, opts);
