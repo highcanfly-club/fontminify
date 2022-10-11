@@ -10,15 +10,13 @@ import replaceExt from 'replace-ext';
 import _ from 'lodash';
 import ttf2woff2 from 'ttf2woff2';
 import isTtf from 'is-ttf';
-
+import type {PluginCloneOption} from '../index.js'
 /**
  * wawoff2 fontmin plugin
  *
- * @param {Object} opts opts
- * @return {Object} stream.Transform instance
  * @api public
  */
-export default opts => {
+export default (opts:PluginCloneOption) => {
 
     opts = _.extend({clone: true}, opts);
 

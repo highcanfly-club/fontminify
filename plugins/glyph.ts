@@ -11,7 +11,7 @@ import isTtf from 'is-ttf';
 import through from 'through2';
 import {b2ab} from 'b3b';
 import {ab2b} from 'b3b';
-import fe from 'fonteditor-core';
+import fe, { TTF } from 'fonteditor-core';
 const TTF = fe.TTF
 const TTFReader = fe.TTFReader
 const TTFWriter = fe.TTFWriter
@@ -22,9 +22,9 @@ const TTFWriter = fe.TTFWriter
  * @param  {Array} subset subset unicode
  * @return {Array}     glyfs array
  */
-function getSubsetGlyfs(ttf, subset) {
+function getSubsetGlyfs(ttf:typeof TTF, subset:string[]) {
 
-    let glyphs = [];
+    let glyphs = [] as string[];
 
     const indexList = ttf.findGlyf({
         unicode: subset || []

@@ -14,12 +14,14 @@ import {ab2b} from 'b3b';
 import replaceExt from 'replace-ext';
 import {deflate} from 'pako';
 import _ from 'lodash';
+import type {Transform} from 'stream'
+import type {PluginCloneOption} from '../index.js'
 
 const ttf2woff = fe.ttf2woff
 
 function compileTtf(buffer, options, cb) {
     let output;
-    const ttf2woffOpts = {};
+    const ttf2woffOpts = {} as any;
 
     if (options.deflate) {
         ttf2woffOpts.deflate = input => {
@@ -45,14 +47,11 @@ function compileTtf(buffer, options, cb) {
 
 /**
  * ttf2woff fontmin plugin
- *
- * @param {Object} opts opts
- * @return {Object} stream.Transform instance
  * @api public
  */
-export default opts => {
+export default (_opts?:PluginCloneOption): Transform => {
 
-    opts = _.extend({clone: true}, opts);
+    const opts = _.extend({clone: true}, _opts);
 
     return through.ctor({
         objectMode: true

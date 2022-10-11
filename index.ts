@@ -19,6 +19,7 @@ import _ttf2eot from "./plugins/ttf2eot.js";
 import _ttf2svg from "./plugins/ttf2svg.js";
 import _ttf2woff from "./plugins/ttf2woff.js";
 import _ttf2woff2 from "./plugins/ttf2woff2.js";
+import * as File from 'vinyl'
 import {
   getFontFolder as _getFontFolder,
   getFonts as _getFonts,
@@ -137,7 +138,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
   /**
    * Add a plugin to the middleware stack
    */
-  use(plugin: Transform): Fontminify<SrcType> {
+  use(plugin: FontminifyPlugin): Fontminify<SrcType> {
     this.streams.push(typeof plugin === "function" ? plugin() : plugin);
     return this;
   }
@@ -147,8 +148,8 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
   run(
     cb: (
       err: Error,
-      files: Array<{ _contents: stream.Readable }>,
-      stream: any
+      files: Array<File>,
+      stream: stream.Stream
     ) => void
   ): stream {
     cb = cb || (() => {});
@@ -205,7 +206,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
   static ttf2woff = (opts?: PluginCloneOption): stream.Transform =>
     _ttf2woff(opts);
   static ttf2woff2 = (opts?: PluginCloneOption): stream.Transform =>
-    _ttf2woff2(opts);
+    _ttf2woff2(opts as PluginCloneOption);
   static ttf2svg = (opts?: PluginCloneOption): stream.Transform =>
     _ttf2svg(opts);
   static css = (opts?: CssOption): stream.Transform => _css(opts);
@@ -215,7 +216,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
   static svgs2ttf = (
     file: string,
     opts?: PluginFromSVGOption
-  ): stream.Transform => _svgs2ttf(file, opts);
+  ): stream.Transform => _svgs2ttf(file, opts as PluginFromSVGOption);
   static otf2ttf = (
     opts?: PluginCloneOption & PluginHintOption
   ): stream.Transform => _otf2ttf(opts);

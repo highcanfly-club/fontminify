@@ -8,13 +8,16 @@
 import isSvg from 'is-svg';
 
 import through from 'through2';
-import path from 'path';
+import * as path from 'path';
 import replaceExt from 'replace-ext';
 import {ab2b} from 'b3b';
 import _ from 'lodash';
 import bufferToVinyl from 'buffer-to-vinyl';
-import fe from 'fonteditor-core';
+import fe, { TTF } from 'fonteditor-core';
 import getEmpty from 'fonteditor-core/lib/ttf/getEmptyttfObject.js'
+import type {PluginFromSVGOption} from '../index.js'
+import * as File from 'vinyl'
+
 const TTF = fe.TTF
 const TTFWriter = fe.TTFWriter
 const svg2ttfobject = fe.svg2ttfobject
@@ -27,6 +30,10 @@ const getEmptyttfObject = () => getEmpty.default()
  * @param {Object} opts opts
  */
 class SvgFont {
+    opts: PluginFromSVGOption;
+    ttf: typeof TTF;
+    startCode: number;
+    contents: Buffer;
     constructor(name, opts) {
 
         this.opts = _.extend(
@@ -65,11 +72,8 @@ class SvgFont {
 
     /**
      * add svg
-     *
-     * @param {string} name     svg basename
-     * @param {buffer} contents svg contents
      */
-    add(name, contents) {
+    add(name:string, contents:Buffer) {
 
         const ttfObj = svg2ttfobject(
             contents.toString('utf-8'),
@@ -116,13 +120,9 @@ class SvgFont {
 /**
  * svgs2ttf fontmin plugin
  *
- * @param {string} file filename
- * @param {Object} opts opts
- * @param {string} opts.fontName font name
- * @return {Object} stream.Transform instance
  * @api public
  */
-export default (file, opts) => {
+export default (file:string|File, opts:PluginFromSVGOption) => {
 
     if (!file) {
         throw new Error('Missing file option for fontmin-svg2ttf');
@@ -131,7 +131,7 @@ export default (file, opts) => {
     opts = _.extend({hinting: true}, opts);
 
     let firstFile;
-    let fileName;
+    let fileName:string;
     let svgFont;
 
     if (typeof file === 'string') {
@@ -140,7 +140,7 @@ export default (file, opts) => {
         file = replaceExt(file, '.ttf');
 
         // set file name
-        fileName = file;
+        fileName = file as string;
     }
     else if (typeof file.path === 'string') {
         fileName = path.basename(file.path);
@@ -151,7 +151,7 @@ export default (file, opts) => {
     }
 
 
-    function bufferContents(file, enc, cb) {
+    function bufferContents(file:File, enc, cb) {
 
         // ignore empty files
         if (file.isNull()) {
@@ -167,7 +167,7 @@ export default (file, opts) => {
         }
 
         // check svg
-        if (!isSvg(file.contents)) {
+        if (!isSvg(file.contents as Buffer)) {
             cb();
             return;
         }

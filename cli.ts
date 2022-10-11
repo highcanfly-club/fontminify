@@ -9,61 +9,74 @@
 
 'use strict';
 
-import fs from 'fs';
+import * as fs from 'fs';
 import meow from 'meow';
-import path from 'path';
+import * as path from 'path';
 import stdin from 'get-stdin';
 import Fontmin from './index.js';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
-const cli = meow({
+const cli = meow([
+    'Usage',
+    '  $ fontmin <file> [<output>]',
+    '  $ fontmin <directory> [<output>]',
+    '  $ fontmin <file> > <output>',
+    '  $ cat <file> | fontmin > <output>',
+    '',
+    'Example',
+    '  $ fontmin fonts/* build',
+    '  $ fontmin fonts build',
+    '  $ fontmin foo.ttf > foo-optimized.ttf',
+    '  $ cat foo.ttf | fontmin > foo-optimized.ttf',
+    '',
+    'Options',
+    '  -t, --text                          require glyphs by text',
+    '  -b, --basic-text                    require glyphs with base chars',
+    '  -d, --deflate-woff                  deflate woff',
+    '  --font-family                       font-family for @font-face CSS',
+    '  --css-glyph                         generate class for each glyf. default = false',
+    '  -T, --show-time                     show time fontmin cost'
+].join('\n'), {
     importMeta: import.meta,
-    help: [
-        'Usage',
-        '  $ fontmin <file> [<output>]',
-        '  $ fontmin <directory> [<output>]',
-        '  $ fontmin <file> > <output>',
-        '  $ cat <file> | fontmin > <output>',
-        '',
-        'Example',
-        '  $ fontmin fonts/* build',
-        '  $ fontmin fonts build',
-        '  $ fontmin foo.ttf > foo-optimized.ttf',
-        '  $ cat foo.ttf | fontmin > foo-optimized.ttf',
-        '',
-        'Options',
-        '  -t, --text                          require glyphs by text',
-        '  -b, --basic-text                    require glyphs with base chars',
-        '  -d, --deflate-woff                  deflate woff',
-        '  --font-family                       font-family for @font-face CSS',
-        '  --css-glyph                         generate class for each glyf. default = false',
-        '  -T, --show-time                     show time fontmin cost'
-    ].join('\n')
-}, {
-    'boolean': [
-        'basic-text',
-        'show-time',
-        'deflate-woff',
-        'css-glyph',
-        'version'
-    ],
-    'string': [
-        'text',
-        'font-family'
-    ],
-    'alias': {
-        t: 'text',
-        b: 'basic-text',
-        d: 'deflate-woff',
-        T: 'show-time',
-        h: 'help',
-        v: 'version'
+    flags:{
+        version: {
+            type: 'boolean',
+            alias:'v'
+        },
+        deflateWoff:{
+            type: 'boolean',
+            alias:'d'
+        },
+        help:{
+            type: 'boolean',
+            alias:'h'
+        },
+        text:{
+            type:'string',
+            alias:'t'
+
+        },
+        showTime:{
+            type: 'boolean',
+            alias:'T'
+        },
+        cssGlyph:{
+            type: 'boolean',
+        },
+        basicText:{
+            type: 'boolean',
+            alias:'b'
+        },
+        fontFamily:{
+            type: 'string'
+        }
+
     }
 });
 
 // version
 if (cli.flags.version) {
-    console.log(require('./package.json').version);
+    console.log('1.0.3');
     process.exit(0);
 }
 
@@ -96,12 +109,12 @@ function run(src, dest) {
 
     const fontmin = new Fontmin()
         .src(src)
-        .use(Fontmin.otf2ttf(pluginOpts))
-        .use(Fontmin.glyph(pluginOpts))
-        .use(Fontmin.ttf2eot(pluginOpts))
-        .use(Fontmin.ttf2svg(pluginOpts))
-        .use(Fontmin.ttf2woff(pluginOpts))
-        .use(Fontmin.ttf2woff2(pluginOpts))
+        .use(Fontmin.otf2ttf(pluginOpts as never))
+        .use(Fontmin.glyph(pluginOpts as never))
+        .use(Fontmin.ttf2eot(pluginOpts as never))
+        .use(Fontmin.ttf2svg(pluginOpts as never))
+        .use(Fontmin.ttf2woff(pluginOpts as never))
+        .use(Fontmin.ttf2woff2(pluginOpts as never))
         .use(Fontmin.css(pluginOpts));
 
     if (process.stdout.isTTY) {
@@ -116,7 +129,7 @@ function run(src, dest) {
 
         if (!process.stdout.isTTY) {
             files.forEach(file => {
-                process.stdout.write(file.contents);
+                process.stdout.write(file.contents?.toString() as string);
             });
         }
 
