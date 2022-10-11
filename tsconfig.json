@@ -1,13 +1,13 @@
 {
-    "compilerOptions": {
-        "module": "ES6",
-        "moduleResolution": "Node",
-        "target": "ES6",
-        "strictNullChecks": true,
-        "strictFunctionTypes": true
-    },
-    "exclude": [
-        "node_modules",
-        "**/node_modules/*"
-    ]
+  "compilerOptions": {
+    "module": "ES6",
+    "moduleResolution": "Node",
+    "target": "ES6",
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "declaration": true,
+    "noEmit": false,
+    "noEmitOnError": false
+  },
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

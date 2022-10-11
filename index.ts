@@ -3,10 +3,8 @@
  * @author junmer
  */
 
-/* eslint-env node */
-
 import combine from "stream-combiner";
-import stream  from "stream";
+import stream, { Transform }  from "stream";
 import concat from "concat-stream";
 import { EventEmitter } from "events";
 import bufferToVinyl from "buffer-to-vinyl";
@@ -32,15 +30,15 @@ import {
 type FontminifyPlugin = Function | stream.Transform;
 type ProbableAsSrc = string[] | string | Buffer;
 
-interface PluginCloneOption {
+export interface PluginCloneOption {
   clone?: boolean;
 }
 
-interface PluginHintOption {
+export interface PluginHintOption {
   hinting?: boolean;
 }
 
-interface PluginFromSVGOption extends PluginHintOption {
+export interface PluginFromSVGOption extends PluginHintOption {
   fontName?: string;
   adjust?: {
     leftSidebearing: number;
@@ -56,7 +54,7 @@ interface PluginFromSVGOption extends PluginHintOption {
   };
 }
 
-interface FontInfo {
+export interface FontInfo {
   fontFile: string;
   fontPath: string;
   base64: boolean;
@@ -65,7 +63,7 @@ interface FontInfo {
   local: boolean;
 }
 
-interface CssOption {
+export interface CssOption {
   glyph?: boolean;
   base64?: boolean;
   iconPrefix?: string;
@@ -77,20 +75,22 @@ interface CssOption {
   tpl?: string;
 }
 
-interface GlyphOption {
+export interface GlyphOption {
   text?: string;
   basicText?: boolean;
   hinting?: boolean;
   use?: FontminifyPlugin;
 }
 
+
 /**
- * Initialize Fontmin
- *
- * @constructor
- * @api public
+ * Initialize Fontminify
  */
-class Fontminify <SrcType extends ProbableAsSrc> extends EventEmitter {
+class Fontminify<SrcType extends ProbableAsSrc>  extends EventEmitter {
+  streams: stream[];
+  _src: any;
+  _dest: any;
+
   constructor() {
     super();
     if (!(this instanceof Fontminify)) {
@@ -101,28 +101,20 @@ class Fontminify <SrcType extends ProbableAsSrc> extends EventEmitter {
 
   /**
    * Get or set the source files
-   *
-   * @param {Array|Buffer|string} file files to be optimized
-   * @return {Object} fontmin
-   * @api public
    */
-  src(file) {
-    if (!arguments.length) {
+  src(...file): Fontminify<SrcType> {
+    if (!file.length) {
       return this._src;
     }
 
-    this._src = arguments;
+    this._src = file;
     return this;
   }
 
   /**
    * Get or set the destination folder
-   *
-   * @param {string} dir folder to written
-   * @return {Object} fontmin
-   * @api public
    */
-  dest(dir) {
+  dest(dir?: string): Fontminify<SrcType> {
     if (!arguments.length) {
       return this._dest;
     }
@@ -133,23 +125,19 @@ class Fontminify <SrcType extends ProbableAsSrc> extends EventEmitter {
 
   /**
    * Add a plugin to the middleware stack
-   *
-   * @param {Function} plugin plugin
-   * @return {Object} fontmin
-   * @api public
    */
-  use(plugin) {
+  use(plugin: Transform): Fontminify<SrcType> {
     this.streams.push(typeof plugin === "function" ? plugin() : plugin);
     return this;
   }
   /**
    * Optimize files
-   *
-   * @param {Function} cb callback
-   * @return {Stream} file stream
-   * @api public
    */
-  run(cb) {
+  run(cb: (
+    err: Error,
+    files: Array<{ _contents: stream.Readable }>,
+    stream: any
+  ) => void):stream {
     cb = cb || (() => {});
 
     const stream = this.createStream();
@@ -203,7 +191,7 @@ class Fontminify <SrcType extends ProbableAsSrc> extends EventEmitter {
   static ttf2woff = (opts?: PluginCloneOption): stream.Transform => _ttf2woff(opts);
   static ttf2woff2 = (opts?: PluginCloneOption): stream.Transform => _ttf2woff2(opts);
   static ttf2svg = (opts?: PluginCloneOption): stream.Transform => _ttf2svg(opts);
-  static css = (opts: CssOption): stream.Transform => _css(opts);
+  static css = (opts?: CssOption): stream.Transform => _css(opts);
   static svg2ttf = (opts?: PluginCloneOption & PluginHintOption): stream.Transform => _svg2ttf(opts);
   static svgs2ttf = (file: string, opts?: PluginFromSVGOption): stream.Transform => _svgs2ttf(file,opts);
   static otf2ttf = (opts?: PluginCloneOption & PluginHintOption): stream.Transform => _otf2ttf(opts);
@@ -227,7 +215,16 @@ class Fontminify <SrcType extends ProbableAsSrc> extends EventEmitter {
     "svgs2ttf",
     "otf2ttf",
   ];
-
+  static mime = {
+    ".*": "application/octet-stream",
+    ttf: "application/font-sfnt",
+    otf: "application/font-sfnt",
+    woff: "application/font-woff",
+    woff2: "application/font-woff2",
+    eot: "application/octet-stream",
+    svg: "image/svg+xml",
+    svgz: "image/svg+xml",
+  };
 }
 
 /**
@@ -235,13 +232,3 @@ class Fontminify <SrcType extends ProbableAsSrc> extends EventEmitter {
  */
 export default Fontminify;
 
-export const mimeTypes = {
-  ".*": "application/octet-stream",
-  ttf: "application/font-sfnt",
-  otf: "application/font-sfnt",
-  woff: "application/font-woff",
-  woff2: "application/font-woff2",
-  eot: "application/octet-stream",
-  svg: "image/svg+xml",
-  svgz: "image/svg+xml",
-};

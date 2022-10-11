@@ -13,6 +13,7 @@ import through from "through2";
 import replaceExt from "replace-ext";
 import {b2a} from "b3b";
 import {fileURLToPath} from 'url';
+import type { CssOption } from "../index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 /**
@@ -102,7 +103,7 @@ function getFontFamily(fontInfo, ttf, opts) {
  * @return {Object} stream.Transform instance
  * @api public
  */
-export default opts => {
+export default (opts?: CssOption) => {
   opts = opts || {};
 
   return through.ctor(

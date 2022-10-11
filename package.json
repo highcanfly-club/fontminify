@@ -1,6 +1,6 @@
 {
   "name": "@sctg/fontminify",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Minify font seamlessly, font subsetter, webfont (eot, woff, svg) converter.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -67,6 +67,8 @@
     "vinyl-fs": "^3.0.3"
   },
   "devDependencies": {
+    "@types/concat-stream": "^2.0.0",
+    "@types/vinyl-fs": "^2.4.12",
     "chai": "^4.3.6",
     "gulp-clean": "^0.4.0",
     "is-eot": "^1.0.0",

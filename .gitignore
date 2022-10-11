@@ -5,3 +5,4 @@ fonts/dest*
 /coverage
 index.js
 cli.js
+*.d.ts
