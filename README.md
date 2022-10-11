@@ -205,15 +205,15 @@ import Fontminify from '@sctg/fontminify'
 
 const fontminify = new Fontimify()
     .use(Fontimify.css({
-        fontPath: './',         // location of font file 
-        base64: true,           // inject base64 data:application/x-font-ttf; (gzip font with css). 
-                                // default = false
-        glyph: true,            // generate class for each glyph. default = false
-        iconPrefix: 'my-icon',  // class prefix, only work when glyph is `true`. default to "icon"
-        fontFamily: 'myfont',   // custom fontFamily, default to filename or get from analysed ttf file
-        asFileName: false,      // rewrite fontFamily as filename force. default = false
-        local: true             // boolean to add local font. default = false
-        tpl: '[fontminify-dir]/lib/font-face.tpl' // an alternative css template
+        fontPath: './',                             // location of font file 
+        base64: true,                               // inject base64 data:application/x-font-ttf; (gzip font with css). 
+                                                    // default = false
+        glyph: true,                                // generate class for each glyph. default = false
+        iconPrefix: 'my-icon',                      // class prefix, only work when glyph is `true`. default to "icon"
+        fontFamily: 'myfont',                       // custom fontFamily, default to filename or get from analysed ttf file
+        asFileName: false,                          // rewrite fontFamily as filename force. default = false
+        local: true,                                // boolean to add local font. default = false
+        tpl: '[fontminify-dir]/lib/font-face.tpl'   // an alternative css template (default internal one)
     }));
 ```
 
