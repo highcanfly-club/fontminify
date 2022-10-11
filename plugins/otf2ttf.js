@@ -5,16 +5,24 @@
 
 /* eslint-env node */
 
-var isOtf = require('is-otf');
-var through = require('through2');
-var otf2ttfobject = require('fonteditor-core').otf2ttfobject;
-var TTFWriter = require('fonteditor-core').TTFWriter;
-var b2ab = require('b3b').b2ab;
-var ab2b = require('b3b').ab2b;
-var replaceExt = require('replace-ext');
-var _ = require('lodash');
-var util = require('../lib/util');
+import isOtf from 'is-otf';
 
+import through from 'through2';
+import fe from 'fonteditor-core';
+import {b2ab} from 'b3b';
+import {ab2b} from 'b3b';
+import replaceExt from 'replace-ext';
+import _ from 'lodash';
+const TTFWriter = fe.TTFWriter
+const otf2ttfobject = fe.otf2ttfobject
+import {
+    getFontFolder,
+    getFonts,
+    getPureText,
+    getUniqText,
+    getSubsetText,
+    string2unicodes,
+  } from '../lib/util.js'
 /**
  * otf2ttf fontmin plugin
  *
@@ -22,13 +30,13 @@ var util = require('../lib/util');
  * @return {Object} stream.Transform instance
  * @api public
  */
-module.exports = function (opts) {
+export default opts => {
 
     opts = _.extend({clone: false, hinting: true}, opts);
 
     // prepare subset
-    var subsetText = util.getSubsetText(opts);
-    opts.subset = util.string2unicodes(subsetText);
+    const subsetText = getSubsetText(opts);
+    opts.subset = string2unicodes(subsetText);
 
     return through.ctor({
         objectMode: true
@@ -61,8 +69,8 @@ module.exports = function (opts) {
         file.path = replaceExt(file.path, '.ttf');
 
         // ttf info
-        var ttfBuffer;
-        var ttfObj;
+        let ttfBuffer;
+        let ttfObj;
 
         // try otf2ttf
         try {

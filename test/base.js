@@ -5,64 +5,68 @@
 
 /* eslint-env node */
 
-var expect = require('chai').expect;
-var path = require('path');
-var bufferToVinyl = require('buffer-to-vinyl');
-var Fontmin = require('../index');
-var fm = Fontmin;
-var fontPath = path.resolve(__dirname, '../fonts');
+import {expect} from 'chai';
 
-describe('Fontmin util', function () {
+import path from 'path';
+import bufferToVinyl from 'buffer-to-vinyl';
+import Fontmin from '../index.js';
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const fm = Fontmin;
+const fontPath = path.resolve(__dirname, '../fonts');
 
-    it('getFontFolder should be string', function () {
+describe('Fontmin util', () => {
+
+    it('getFontFolder should be string', () => {
         expect(Fontmin.util.getFontFolder()).to.be.a('string');
     });
 
-    it('getFonts should be array', function () {
+    it('getFonts should be array', () => {
         expect(Fontmin.util.getFonts()).to.be.a('array');
     });
 
 });
 
 
-describe('Fontmin base', function () {
+describe('Fontmin base', () => {
 
-    it('should run when no cb', function (done) {
+    it('should run when no cb', done => {
 
-        fm()
+        new fm()
             .src(fontPath + '/**.empty')
             .run()
-            .on('end', function () {
+            .on('end', () => {
                 done();
             });
     });
 
 
-    it('should not dest when src buffer', function (done) {
+    it('should not dest when src buffer', done => {
 
-        fm()
+        new fm()
             .src(Buffer.from(''))
             .dest(fontPath + '/dest')
-            .run(function (err, files, stream) {
+            .run((err, files, stream) => {
                 done();
             });
     });
 
 
-    it('should run when src null', function (done) {
+    it('should run when src null', done => {
 
-        var plugins = Fontmin.plugins.filter(function (plugin) {
+        const plugins = Fontmin.plugins.filter(plugin => {
             return plugin !== 'svgs2ttf';
         });
 
-        var works = plugins.length;
+        let works = plugins.length;
 
         function usePlugin(plugin) {
 
-            fm()
+            new fm()
                 .src(fontPath + '/SentyBrush.ttf', {read: false})
                 .use(Fontmin[plugin]())
-                .run(function (err, files, stream) {
+                .run((err, files, stream) => {
 
                     expect(files.length).equal(1);
 
@@ -78,19 +82,19 @@ describe('Fontmin base', function () {
     });
 
 
-    it('should dest one when clone false', function (done) {
+    it('should dest one when clone false', done => {
 
 
-        var plugins = ['ttf2eot', 'ttf2woff', 'ttf2svg'];
-        var works = plugins.length;
+        const plugins = ['ttf2eot', 'ttf2woff', 'ttf2svg'];
+        let works = plugins.length;
 
         function usePlugin(plugin) {
 
-            fm()
+            new fm()
                 .src(fontPath + '/SentyBrush.ttf')
                 .use(Fontmin.glyph({text: '1'}))
                 .use(Fontmin[plugin]({clone: false}))
-                .run(function (err, files, stream) {
+                .run((err, files, stream) => {
 
                     expect(files.length).equal(1);
 
@@ -106,28 +110,28 @@ describe('Fontmin base', function () {
 
     });
 
-    it('should exclude files not font', function (done) {
+    it('should exclude files not font', done => {
 
-        fm()
+        new fm()
             .src(fontPath + '/**.html', {read: false})
             .dest(fontPath + '/dest')
-            .run(function (err, files, stream) {
+            .run((err, files, stream) => {
                 expect(files.length).equal(1);
                 done();
             });
     });
 
-    it('should throw `Streaming is not supported`', function (done) {
+    it('should throw `Streaming is not supported`', done => {
 
-        var plugins = Fontmin.plugins;
-        var works = plugins.length;
+        const plugins = Fontmin.plugins;
+        let works = plugins.length;
 
         function usePlugin(plugin) {
 
-            fm()
+            new fm()
                 .src(fontPath + '/SentyBrush.ttf', {buffer: false})
                 .use(Fontmin[plugin]('test'))
-                .run(function (err, files, stream) {
+                .run((err, files, stream) => {
 
                     expect(err).to.match(/Streaming/);
 

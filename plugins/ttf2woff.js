@@ -5,21 +5,24 @@
 
 /* eslint-env node */
 
-var isTtf = require('is-ttf');
-var through = require('through2');
-var ttf2woff = require('fonteditor-core').ttf2woff;
-var b2ab = require('b3b').b2ab;
-var ab2b = require('b3b').ab2b;
-var replaceExt = require('replace-ext');
-var deflate = require('pako').deflate;
-var _ = require('lodash');
+import isTtf from 'is-ttf';
+
+import through from 'through2';
+import fe from 'fonteditor-core';
+import {b2ab} from 'b3b';
+import {ab2b} from 'b3b';
+import replaceExt from 'replace-ext';
+import {deflate} from 'pako';
+import _ from 'lodash';
+
+const ttf2woff = fe.ttf2woff
 
 function compileTtf(buffer, options, cb) {
-    var output;
-    var ttf2woffOpts = {};
+    let output;
+    const ttf2woffOpts = {};
 
     if (options.deflate) {
-        ttf2woffOpts.deflate = function (input) {
+        ttf2woffOpts.deflate = input => {
             return deflate(Uint8Array.from(input));
         };
     }
@@ -47,7 +50,7 @@ function compileTtf(buffer, options, cb) {
  * @return {Object} stream.Transform instance
  * @api public
  */
-module.exports = function (opts) {
+export default opts => {
 
     opts = _.extend({clone: true}, opts);
 
@@ -81,7 +84,7 @@ module.exports = function (opts) {
         // replace ext
         file.path = replaceExt(file.path, '.woff');
 
-        compileTtf(file.contents, opts, function (err, buffer) {
+        compileTtf(file.contents, opts, (err, buffer) => {
 
             if (err) {
                 cb(err);

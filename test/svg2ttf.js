@@ -1,34 +1,38 @@
 /**
- * @file  fontmin svg2ttf
+ * @file  fontmin svgs2ttf
  * @author junmer
  */
 
 /* eslint-env node */
 /* global before */
 
-var assert = require('chai').assert;
+import {assert} from 'chai';
 
-var fs = require('fs');
-var path = require('path');
-var clean = require('gulp-clean');
-var isTtf = require('is-ttf');
-var Fontmin = require('../index');
+import fs from 'fs';
+import path from 'path';
+import clean from 'gulp-clean';
+import isTtf from 'is-ttf';
+import Fontmin from '../index.js';
+import {fileURLToPath} from 'url';
 
-var srcPath = path.resolve(__dirname, '../fonts/fontawesome-webfont.svg');
-var destPath = path.resolve(__dirname, '../fonts/dest_svg');
-var destFile = destPath + '/fontawesome-webfont';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const srcPath = path.resolve(__dirname, '../fonts/svg/*.svg');
+const destPath = path.resolve(__dirname, '../fonts/dest_svgs');
+const destFile = destPath + '/iconfont';
+
 
 function getFile(files, ext) {
-    var re = new RegExp(ext + '$');
-    var vf = files.filter(function (file) {
+    const re = new RegExp(ext + '$');
+    const vf = files.filter(file => {
         return re.test(file.path);
     });
     return vf[0];
 }
 
-var outputFiles;
+let outputFiles;
 
-before(function (done) {
+before(done => {
 
     // clean
     new Fontmin()
@@ -36,15 +40,21 @@ before(function (done) {
         .use(clean())
         .run(next);
 
+
+
     // minfy
-    var fontmin = new Fontmin()
+    const fontmin = new Fontmin()
         .src(srcPath)
-        .use(Fontmin.svg2ttf())
+        .use(Fontmin.svgs2ttf('iconfont.ttf'))
+        .use(Fontmin.ttf2svg())
+        .use(Fontmin.css({
+            glyph: true
+        }))
         .dest(destPath);
 
-
     function next() {
-        fontmin.run(function (err, files, stream) {
+
+        fontmin.run((err, files, stream) => {
 
             if (err) {
                 console.log(err);
@@ -57,48 +67,56 @@ before(function (done) {
         });
     }
 
-
 });
 
 
-describe('svg2ttf plugin', function () {
+describe('svgs2ttf plugin', () => {
 
-    it('input is\'t svg shoud be pass', function (done) {
-
-        new Fontmin()
-            .src(path.resolve(__dirname, '../fonts/*.html'))
-            .use(Fontmin.svg2ttf())
-            .run(function (err, files) {
-                var ext = path.extname(files[0].path);
-                assert.equal(ext, '.html');
-                done();
-            });
-
+    it('should require root path', () => {
+        assert.throws(Fontmin.svgs2ttf.bind(), /Missing file option/);
     });
 
-    it('should dest one when clone false', function (done) {
+    it('should require root path in file options', () => {
+        assert.throws(
+            Fontmin.svgs2ttf.bind(null, {path: null}), /file options for fontmin-svg2ttf/
+        );
+    });
+
+    it('set path in file options', done => {
 
         new Fontmin()
             .src(srcPath)
-            .use(Fontmin.svg2ttf({clone: false}))
-            .run(function (err, files) {
-                assert.equal(files.length, 1);
+            .use(Fontmin.svgs2ttf({path: 'test.ttf'}))
+            .run((err, files) => {
+                assert(isTtf(files[0].contents));
+                done();
+            });
+    });
+
+    it('input is\'t svg shoud be exclude', done => {
+
+        new Fontmin()
+            .src(path.resolve(__dirname, '../fonts/*.html'))
+            .use(Fontmin.svgs2ttf('test.ttf'))
+            .run((err, files) => {
+                assert.equal(files.length, 0);
                 done();
             });
 
     });
 
-    it('output buffer should be ttf', function () {
+    it('output buffer should be ttf', () => {
         assert(isTtf(getFile(outputFiles, 'ttf').contents));
     });
 
-    it('dest file should exist ttf', function () {
+
+    it('dest file should exist ttf', () => {
         assert(
             fs.existsSync(destFile + '.ttf')
         );
     });
 
-    it('dest file should be ttf', function () {
+    it('dest file should be ttf', () => {
         try {
             assert(
                 isTtf(

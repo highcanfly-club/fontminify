@@ -6,30 +6,33 @@
 /* eslint-env node */
 /* global before */
 
-var assert = require('chai').assert;
+import {assert} from 'chai';
 
-var fs = require('fs');
-var path = require('path');
-var clean = require('gulp-clean');
-var isTtf = require('is-ttf');
-var Fontmin = require('../index');
+import fs from 'fs';
+import path from 'path';
+import clean from 'gulp-clean';
+import isTtf from 'is-ttf';
+import Fontmin from '../index.js';
+import {fileURLToPath} from 'url';
 
-var srcPath = path.resolve(__dirname, '../fonts/svg/*.svg');
-var destPath = path.resolve(__dirname, '../fonts/dest_svgs');
-var destFile = destPath + '/iconfont';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const srcPath = path.resolve(__dirname, '../fonts/svg/*.svg');
+const destPath = path.resolve(__dirname, '../fonts/dest_svgs');
+const destFile = destPath + '/iconfont';
 
 
 function getFile(files, ext) {
-    var re = new RegExp(ext + '$');
-    var vf = files.filter(function (file) {
+    const re = new RegExp(ext + '$');
+    const vf = files.filter(file => {
         return re.test(file.path);
     });
     return vf[0];
 }
 
-var outputFiles;
+let outputFiles;
 
-before(function (done) {
+before(done => {
 
     // clean
     new Fontmin()
@@ -40,7 +43,7 @@ before(function (done) {
 
 
     // minfy
-    var fontmin = new Fontmin()
+    const fontmin = new Fontmin()
         .src(srcPath)
         .use(Fontmin.svgs2ttf('iconfont.ttf'))
         .use(Fontmin.ttf2svg())
@@ -51,7 +54,7 @@ before(function (done) {
 
     function next() {
 
-        fontmin.run(function (err, files, stream) {
+        fontmin.run((err, files, stream) => {
 
             if (err) {
                 console.log(err);
@@ -67,53 +70,53 @@ before(function (done) {
 });
 
 
-describe('svgs2ttf plugin', function () {
+describe('svgs2ttf plugin', () => {
 
-    it('should require root path', function () {
+    it('should require root path', () => {
         assert.throws(Fontmin.svgs2ttf.bind(), /Missing file option/);
     });
 
-    it('should require root path in file options', function () {
+    it('should require root path in file options', () => {
         assert.throws(
             Fontmin.svgs2ttf.bind(null, {path: null}), /file options for fontmin-svg2ttf/
         );
     });
 
-    it('set path in file options', function (done) {
+    it('set path in file options', done => {
 
         new Fontmin()
             .src(srcPath)
             .use(Fontmin.svgs2ttf({path: 'test.ttf'}))
-            .run(function (err, files) {
+            .run((err, files) => {
                 assert(isTtf(files[0].contents));
                 done();
             });
     });
 
-    it('input is\'t svg shoud be exclude', function (done) {
+    it('input is\'t svg shoud be exclude', done => {
 
         new Fontmin()
             .src(path.resolve(__dirname, '../fonts/*.html'))
             .use(Fontmin.svgs2ttf('test.ttf'))
-            .run(function (err, files) {
+            .run((err, files) => {
                 assert.equal(files.length, 0);
                 done();
             });
 
     });
 
-    it('output buffer should be ttf', function () {
+    it('output buffer should be ttf', () => {
         assert(isTtf(getFile(outputFiles, 'ttf').contents));
     });
 
 
-    it('dest file should exist ttf', function () {
+    it('dest file should exist ttf', () => {
         assert(
             fs.existsSync(destFile + '.ttf')
         );
     });
 
-    it('dest file should be ttf', function () {
+    it('dest file should be ttf', () => {
         try {
             assert(
                 isTtf(

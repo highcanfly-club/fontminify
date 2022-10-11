@@ -9,14 +9,15 @@
 
 'use strict';
 
-var fs = require('fs');
-var meow = require('meow');
-var path = require('path');
-var stdin = require('get-stdin');
-var Fontmin = require('./');
-var _ = require('lodash');
+import fs from 'fs';
+import meow from 'meow';
+import path from 'path';
+import stdin from 'get-stdin';
+import Fontmin from './index.js';
+import _ from 'lodash';
 
-var cli = meow({
+const cli = meow({
+    importMeta: import.meta,
     help: [
         'Usage',
         '  $ fontmin <file> [<output>]',
@@ -84,7 +85,7 @@ function run(src, dest) {
 
     cli.flags.showTime && console.time('fontmin use');
 
-    var pluginOpts = _.extend(
+    const pluginOpts = _.extend(
         {},
         cli.flags,
         {
@@ -93,7 +94,7 @@ function run(src, dest) {
         }
     );
 
-    var fontmin = new Fontmin()
+    const fontmin = new Fontmin()
         .src(src)
         .use(Fontmin.otf2ttf(pluginOpts))
         .use(Fontmin.glyph(pluginOpts))
@@ -107,14 +108,14 @@ function run(src, dest) {
         fontmin.dest(dest ? dest : 'build');
     }
 
-    fontmin.run(function (err, files) {
+    fontmin.run((err, files) => {
         if (err) {
             console.error(err.stack || err);
             process.exit(1);
         }
 
         if (!process.stdout.isTTY) {
-            files.forEach(function (file) {
+            files.forEach(file => {
                 process.stdout.write(file.contents);
             });
         }
@@ -124,8 +125,8 @@ function run(src, dest) {
 }
 
 if (process.stdin.isTTY) {
-    var src = cli.input;
-    var dest;
+    let src = cli.input;
+    let dest;
 
     if (!cli.input.length) {
         console.error([
@@ -147,7 +148,7 @@ if (process.stdin.isTTY) {
         src.pop();
     }
 
-    src = src.map(function (s) {
+    src = src.map(s => {
         if (!isFile(s) && fs.existsSync(s)) {
             return path.join(s, '**/*');
         }

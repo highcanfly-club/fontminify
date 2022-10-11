@@ -24,10 +24,11 @@ $ npm install --save fontminify
 
 ## Usage
 
+This is now a strict ES6 module
 ```js
-var Fontminify = require('fontminify');
+import Fontminify from '@sctg/fontminify';
 
-var fontminify = new Fontminify()
+const fontminify = new Fontminify()
     .src('fonts/*.ttf')
     .dest('build/fonts');
 
@@ -44,10 +45,10 @@ fontminify.run(function (err, files) {
 You can use [gulp-rename](https://github.com/hparra/gulp-rename) to rename your files:
 
 ```js
-var Fontimify = require('@sctg/fontminify');
-var rename = require('gulp-rename');
+import Fontminify from '@sctg/fontminify';
+import rename from 'gulp-rename';
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .src('fonts/big.ttf')
     .use(rename('small.ttf'));
 ```

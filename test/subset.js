@@ -6,42 +6,48 @@
 /* eslint-env node */
 /* global before */
 
-var expect = require('chai').expect;
+import {expect} from 'chai';
 
-var fs = require('fs');
-var path = require('path');
-var clean = require('gulp-clean');
-var isTtf = require('is-ttf');
-var Fontmin = require('../index');
+import fs, { cp } from 'fs';
+import path from 'path';
+import clean from 'gulp-clean';
+import isTtf from 'is-ttf';
+import Fontminify from '../index.js';
+import fe from 'fonteditor-core';
+import {b2ab} from 'b3b';
+import {fileURLToPath} from 'url';
 
-var fontName = 'SentyBrush';
-var fontDir = path.resolve(__dirname, '../fonts');
-var srcPath = path.resolve(fontDir, fontName + '.ttf');
-var destPath = path.resolve(fontDir, 'dest_ttf');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const TTFReader = fe.TTFReader
+const fontName = 'SentyBrush';
+const fontDir = path.resolve(__dirname, '../fonts');
+const srcPath = path.resolve(fontDir, fontName + '.ttf');
+const destPath = path.resolve(fontDir, 'dest_ttf');
 
 // first mined ttf
-var mined;
+let mined;
 
 // first min
-before(function (done) {
+before(done => {
 
     // clean
-    new Fontmin()
+    new Fontminify()
         .src(destPath)
         .use(clean())
         .run(afterClean);
 
     // subset first
-    var fontmin = new Fontmin()
+    const fontmin = new Fontminify()
         .src(srcPath)
-        .use(Fontmin.glyph({
+        .use(Fontminify.glyph({
             text: 'abcd   efg',
             // trim: false
         }))
         .dest(destPath);
 
     function afterClean() {
-        fontmin.run(function (err, files, stream) {
+        fontmin.run((err, files, stream) => {
             mined = files[0].contents;
             done();
         });
@@ -50,33 +56,33 @@ before(function (done) {
 
 });
 
-describe('subset', function () {
+describe('subset', () => {
 
-    it('input is\'t ttf shoud be pass', function (done) {
+    it('input is\'t ttf shoud be pass', done => {
 
-        new Fontmin()
+        new Fontminify()
             .src(fontDir + '/*.html')
-            .use(Fontmin.glyph({
+            .use(Fontminify.glyph({
                 text: 'test'
             }))
-            .run(function (err, files) {
-                var ext = path.extname(files[0].path);
+            .run((err, files) => {
+                const ext = path.extname(files[0].path);
                 expect(ext).equal('.html');
                 done();
             });
 
     });
 
-    it('should be ok when unicodes out of subbset', function () {
+    it('should be ok when unicodes out of subbset', () => {
 
         // it ttf
         expect(isTtf(mined)).to.be.ok;
 
     });
 
-    it('dest should be minier ttf', function () {
+    it('dest should be minier ttf', () => {
 
-        var srcFile = fs.readFileSync(srcPath);
+        const srcFile = fs.readFileSync(srcPath);
 
         // minier
         expect(mined.length).to.be.below(srcFile.length);
@@ -94,44 +100,42 @@ describe('subset', function () {
 
     // });
 
-    it('should has whitespace when mixed text and whitespace', function () {
+    it('should has whitespace when mixed text and whitespace', () => {
 
-        var TTFReader = require('fonteditor-core').TTFReader;
-        var b2ab = require('b3b').b2ab;
-        var ttf = new TTFReader().read(b2ab(mined));
+        const ttf = new TTFReader().read(b2ab(mined));
 
         // contain whitespace
         expect(ttf.cmap).to.contain.any.keys(['32']);
 
     });
 
-    it('should support empty text', function (done) {
+    it('should support empty text', done => {
 
-        new Fontmin()
+        new Fontminify()
             .src(srcPath)
-            .use(Fontmin.glyph({
+            .use(Fontminify.glyph({
                 text: ''
             }))
             .run(done);
 
     });
 
-     it('should support UTF-16-encoded text', function (done) {
+     it('should support UTF-16-encoded text', done => {
 
-        new Fontmin()
+        new Fontminify()
             .src(srcPath)
-            .use(Fontmin.glyph({
+            .use(Fontminify.glyph({
                 text: '🐴'
             }))
             .run(done);
 
     });
 
-    it('should support use plugin function', function (done) {
+    it('should support use plugin function', done => {
 
-        new Fontmin()
+        new Fontminify()
             .src(srcPath)
-            .use(Fontmin.glyph({
+            .use(Fontminify.glyph({
                 text: 'test',
                 use: function (ttf) {
                     expect(ttf).to.have.any.keys('ttf');
@@ -141,31 +145,31 @@ describe('subset', function () {
 
     });
 
-    it('should pass use plugin not function', function (done) {
+    it('should pass use plugin not function', done => {
 
-        new Fontmin()
+        new Fontminify()
             .src(srcPath)
-            .use(Fontmin.glyph({
+            .use(Fontminify.glyph({
                 use: false
             }))
             .run(done);
 
     });
 
-    it('subset of non-existent character shoud be ttf', function (done) {
+    it('subset of non-existent character shoud be ttf', done => {
 
-        var destTtf = path.resolve(destPath, fontName + '.ttf');
+        const destTtf = path.resolve(destPath, fontName + '.ttf');
 
-        var fontmin = new Fontmin()
+        const fontmin = new Fontminify()
             .src(destTtf)
-            .use(Fontmin.glyph({
+            .use(Fontminify.glyph({
                 text: '字体里是没有中文字符的',
                 basicText: true
             }));
 
-        fontmin.run(function (err, files, stream) {
+        fontmin.run((err, files, stream) => {
 
-            var twiceMined = files[0].contents;
+            const twiceMined = files[0].contents;
 
             // it ttf
             expect(isTtf(twiceMined)).to.be.ok;

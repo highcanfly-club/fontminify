@@ -4,14 +4,17 @@
  */
 
 /* eslint-env node */
-var _ = require("lodash");
-var fs = require("fs");
-var path = require("path");
-var isTtf = require("is-ttf");
-var through = require("through2");
-var replaceExt = require("replace-ext");
-var b2a = require("b3b").b2a;
+import _ from "lodash";
 
+import fs from "fs";
+import path from "path";
+import isTtf from "is-ttf";
+import through from "through2";
+import replaceExt from "replace-ext";
+import {b2a} from "b3b";
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 /**
  * listUnicode
  *
@@ -20,7 +23,7 @@ var b2a = require("b3b").b2a;
  */
 function listUnicode(unicode) {
   return unicode
-    .map(function (u) {
+    .map(u => {
       return "\\" + u.toString(16);
     })
     .join(",");
@@ -33,10 +36,10 @@ function listUnicode(unicode) {
  * @return {Object} icon obj
  */
 function getGlyfList(ttf) {
-  var glyfList = [];
+  const glyfList = [];
 
   // exclude empty glyf
-  var filtered = ttf.glyf.filter(function (g) {
+  const filtered = ttf.glyf.filter(g => {
     return (
       g.name !== ".notdef" &&
       g.name !== ".null" &&
@@ -47,7 +50,7 @@ function getGlyfList(ttf) {
   });
 
   // format glyf info
-  filtered.forEach(function (g) {
+  filtered.forEach(g => {
     glyfList.push({
       code: "&#x" + g.unicode[0].toString(16) + ";",
       codeName: listUnicode(g.unicode),
@@ -69,7 +72,7 @@ function getGlyfList(ttf) {
  * @return {string} font family name
  */
 function getFontFamily(fontInfo, ttf, opts) {
-  var fontFamily = opts.fontFamily;
+  let fontFamily = opts.fontFamily;
   // Call transform function
   if (typeof fontFamily === "function") {
     fontFamily = fontFamily(_.cloneDeep(fontInfo), ttf);
@@ -99,7 +102,7 @@ function getFontFamily(fontInfo, ttf, opts) {
  * @return {Object} stream.Transform instance
  * @api public
  */
-module.exports = function (opts) {
+export default opts => {
   opts = opts || {};
 
   return through.ctor(
@@ -129,10 +132,10 @@ module.exports = function (opts) {
       this.push(file.clone(false));
 
       file.path = replaceExt(file.path, ".css");
-      var fontFile = opts.filename || path.basename(file.path, ".css");
+      const fontFile = opts.filename || path.basename(file.path, ".css");
 
       // font data
-      var fontInfo = {
+      const fontInfo = {
         fontFile: fontFile,
         fontPath: "",
         base64: "",
@@ -145,7 +148,7 @@ module.exports = function (opts) {
       _.extend(fontInfo, opts);
 
       // ttf obj
-      var ttfObject = file.ttfObject || {
+      const ttfObject = file.ttfObject || {
         name: {},
       };
 
@@ -176,8 +179,8 @@ module.exports = function (opts) {
       }
 
       // render
-      var output = _.attempt(function (data) {
-        var tpl = "";
+      const output = _.attempt(data => {
+        let tpl = "";
         if (opts.tpl && opts.tpl.length && fs.existsSync(opts.tpl)) {
           tpl = fs.readFileSync(opts.tpl).toString("utf-8");
         } else {
@@ -185,7 +188,7 @@ module.exports = function (opts) {
             .readFileSync(path.resolve(__dirname, "../lib/font-face.tpl"))
             .toString("utf-8");
         }
-        var renderCss = _.template(tpl);
+        const renderCss = _.template(tpl);
         return Buffer.from(renderCss(data));
       }, fontInfo);
 

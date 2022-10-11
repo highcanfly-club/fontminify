@@ -5,18 +5,20 @@
 
 /* eslint-env node */
 
-var isSvg = require('is-svg');
-var through = require('through2');
-var path = require('path');
-var replaceExt = require('replace-ext');
-var ab2b = require('b3b').ab2b;
-var _ = require('lodash');
-var bufferToVinyl = require('buffer-to-vinyl');
-var TTFWriter = require('fonteditor-core').TTFWriter;
-var TTF = require('fonteditor-core').TTF;
-var svg2ttfobject = require('fonteditor-core').svg2ttfobject;
-var getEmptyttfObject = require('fonteditor-core/lib/ttf/getEmptyttfObject').default;
+import isSvg from 'is-svg';
 
+import through from 'through2';
+import path from 'path';
+import replaceExt from 'replace-ext';
+import {ab2b} from 'b3b';
+import _ from 'lodash';
+import bufferToVinyl from 'buffer-to-vinyl';
+import fe from 'fonteditor-core';
+import getEmpty from 'fonteditor-core/lib/ttf/getEmptyttfObject.js'
+const TTF = fe.TTF
+const TTFWriter = fe.TTFWriter
+const svg2ttfobject = fe.svg2ttfobject
+const getEmptyttfObject = () => getEmpty.default()
 /**
  * SvgFont
  *
@@ -24,92 +26,92 @@ var getEmptyttfObject = require('fonteditor-core/lib/ttf/getEmptyttfObject').def
  * @param {string} name filename
  * @param {Object} opts opts
  */
-function SvgFont(name, opts) {
+class SvgFont {
+    constructor(name, opts) {
 
-    this.opts = _.extend(
-        {
-            adjust: {
-                leftSideBearing: 0,
-                rightSideBearing: 0,
-                ajdustToEmBox: true,
-                ajdustToEmPadding: 0
+        this.opts = _.extend(
+            {
+                adjust: {
+                    leftSideBearing: 0,
+                    rightSideBearing: 0,
+                    ajdustToEmBox: true,
+                    ajdustToEmPadding: 0
+                },
+                name: {
+                    fontFamily: name,
+                    fontSubFamily: name,
+                    uniqueSubFamily: name,
+                    postScriptName: name
+                }
             },
-            name: {
-                fontFamily: name,
-                fontSubFamily: name,
-                uniqueSubFamily: name,
-                postScriptName: name
+            opts
+        );
+
+        // empty ttfobj
+        const ttfobj = getEmptyttfObject();
+        // for save name
+        ttfobj.post.format = 2;
+
+        // new TTF
+        this.ttf = new TTF(ttfobj);
+
+        // set name
+        this.ttf.setName(this.opts.name);
+
+        // unicode start
+        this.startCode = opts.startCode || 0xe001;
+
+    }
+
+    /**
+     * add svg
+     *
+     * @param {string} name     svg basename
+     * @param {buffer} contents svg contents
+     */
+    add(name, contents) {
+
+        const ttfObj = svg2ttfobject(
+            contents.toString('utf-8'),
+            {
+                combinePath: true
             }
-        },
-        opts
-    );
+        );
 
-    // empty ttfobj
-    var ttfobj = getEmptyttfObject();
+        const glyf = ttfObj.glyf[0];
 
-    // for save name
-    ttfobj.post.format = 2;
+        glyf.name = path.basename(name, '.svg');
 
-    // new TTF
-    this.ttf = new TTF(ttfobj);
-
-    // set name
-    this.ttf.setName(this.opts.name);
-
-    // unicode start
-    this.startCode = opts.startCode || 0xe001;
-
-}
-
-/**
- * add svg
- *
- * @param {string} name     svg basename
- * @param {buffer} contents svg contents
- */
-SvgFont.prototype.add = function (name, contents) {
-
-    var ttfObj = svg2ttfobject(
-        contents.toString('utf-8'),
-        {
-            combinePath: true
+        if (!Array.isArray(glyf.unicode)) {
+            glyf.unicode = [this.startCode++];
         }
-    );
 
-    var glyf = ttfObj.glyf[0];
+        this.ttf.addGlyf(glyf);
 
-    glyf.name = path.basename(name, '.svg');
-
-    if (!Array.isArray(glyf.unicode)) {
-        glyf.unicode = [this.startCode++];
     }
 
-    this.ttf.addGlyf(glyf);
+    /**
+     * compile ttf contents
+     *
+     */
+    compile() {
 
-};
+        if (this.opts.adjust) {
+            this.ttf.adjustGlyfPos(null, this.opts.adjust);
+            this.ttf.adjustGlyf(null, this.opts.adjust);
+        }
 
-/**
- * compile ttf contents
- *
- */
-SvgFont.prototype.compile = function () {
+        this.contents = ab2b(
+            new TTFWriter(
+                this.opts
+            )
+            .write(
+                this.ttf.ttf
+            )
+        );
 
-    if (this.opts.adjust) {
-        this.ttf.adjustGlyfPos(null, this.opts.adjust);
-        this.ttf.adjustGlyf(null, this.opts.adjust);
     }
-
-    this.contents = ab2b(
-        new TTFWriter(
-            this.opts
-        )
-        .write(
-            this.ttf.ttf
-        )
-    );
-
-};
-
+}
 
 /**
  * svgs2ttf fontmin plugin
@@ -120,7 +122,7 @@ SvgFont.prototype.compile = function () {
  * @return {Object} stream.Transform instance
  * @api public
  */
-module.exports = function (file, opts) {
+export default (file, opts) => {
 
     if (!file) {
         throw new Error('Missing file option for fontmin-svg2ttf');
@@ -128,9 +130,9 @@ module.exports = function (file, opts) {
 
     opts = _.extend({hinting: true}, opts);
 
-    var firstFile;
-    var fileName;
-    var svgFont;
+    let firstFile;
+    let fileName;
+    let svgFont;
 
     if (typeof file === 'string') {
 
@@ -177,7 +179,7 @@ module.exports = function (file, opts) {
 
         // construct SvgFont instance
         if (!svgFont) {
-            var fontName = opts.fontName || path.basename(fileName, '.ttf');
+            const fontName = opts.fontName || path.basename(fileName, '.ttf');
             svgFont = new SvgFont(fontName, opts);
         }
 
@@ -195,7 +197,7 @@ module.exports = function (file, opts) {
             return;
         }
 
-        var joinedFile;
+        let joinedFile;
 
         // if file opt was a file path
         // clone everything from the first file
