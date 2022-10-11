@@ -6,7 +6,7 @@
 /* eslint-env node */
 
 import combine from "stream-combiner";
-
+import stream  from "stream";
 import concat from "concat-stream";
 import { EventEmitter } from "events";
 import bufferToVinyl from "buffer-to-vinyl";
@@ -29,14 +29,68 @@ import {
   string2unicodes as _string2unicodes,
 } from "./lib/util.js";
 
-//import { glyph, otf2ttf, svgs2ttf, ttf2eot, ttf2svg, ttf2woff, ttf2woff2 } from '.';
+type FontminifyPlugin = Function | stream.Transform;
+type ProbableAsSrc = string[] | string | Buffer;
+
+interface PluginCloneOption {
+  clone?: boolean;
+}
+
+interface PluginHintOption {
+  hinting?: boolean;
+}
+
+interface PluginFromSVGOption extends PluginHintOption {
+  fontName?: string;
+  adjust?: {
+    leftSidebearing: number;
+    rightSidebearing: number;
+    ajdustToEmBox: boolean;
+    ajdustToEmPadding: number;
+  };
+  name?: {
+    fontFamily?: string;
+    fontSubFamily?: string;
+    uniqueSubFamily?: string;
+    postScriptName?: string;
+  };
+}
+
+interface FontInfo {
+  fontFile: string;
+  fontPath: string;
+  base64: boolean;
+  glyph: boolean;
+  iconPrefix: string;
+  local: boolean;
+}
+
+interface CssOption {
+  glyph?: boolean;
+  base64?: boolean;
+  iconPrefix?: string;
+  fontFamily?: string | ((fontinfo: FontInfo, ttf: any) => string);
+  filename?: string;
+  fontPath?: string;
+  asFileName?: boolean;
+  local?: boolean;
+  tpl?: string;
+}
+
+interface GlyphOption {
+  text?: string;
+  basicText?: boolean;
+  hinting?: boolean;
+  use?: FontminifyPlugin;
+}
+
 /**
  * Initialize Fontmin
  *
  * @constructor
  * @api public
  */
-class Fontminify extends EventEmitter {
+class Fontminify <SrcType extends ProbableAsSrc> extends EventEmitter {
   constructor() {
     super();
     if (!(this instanceof Fontminify)) {
@@ -144,23 +198,23 @@ class Fontminify extends EventEmitter {
 
     return vfs.src(...this.src());
   }
-  static glyph = (o) => _glyph(o);
-  static ttf2eot = (o) => _ttf2eot(o);
-  static ttf2woff = (o) => _ttf2woff(o);
-  static ttf2woff2 = (o) => _ttf2woff2(o);
-  static ttf2svg = (o) => _ttf2svg(o);
-  static css = (o) => _css(o);
-  static svg2ttf = (o) => _svg2ttf(o);
-  static svgs2ttf = (o) => _svgs2ttf(o);
-  static otf2ttf = (o) => _otf2ttf(o);
+  static glyph = (opts: GlyphOption): stream.Transform => _glyph(opts);
+  static ttf2eot = (opts?: PluginCloneOption): stream.Transform => _ttf2eot(opts);
+  static ttf2woff = (opts?: PluginCloneOption): stream.Transform => _ttf2woff(opts);
+  static ttf2woff2 = (opts?: PluginCloneOption): stream.Transform => _ttf2woff2(opts);
+  static ttf2svg = (opts?: PluginCloneOption): stream.Transform => _ttf2svg(opts);
+  static css = (opts: CssOption): stream.Transform => _css(opts);
+  static svg2ttf = (opts?: PluginCloneOption & PluginHintOption): stream.Transform => _svg2ttf(opts);
+  static svgs2ttf = (file: string, opts?: PluginFromSVGOption): stream.Transform => _svgs2ttf(file,opts);
+  static otf2ttf = (opts?: PluginCloneOption & PluginHintOption): stream.Transform => _otf2ttf(opts);
 
   static util = {
     getFontFolder: () => _getFontFolder(),
     getFonts: () => _getFonts(),
-    getPureText: () => _getPureText(),
-    getUniqText: () => _getUniqText(),
-    getSubsetText: () => _getSubsetText(),
-    string2unicodes: () => _string2unicodes(),
+    getPureText: (str:string) => _getPureText(str),
+    getUniqText: (str:string) => _getUniqText(str),
+    getSubsetText: (opts) => _getSubsetText(opts),
+    string2unicodes: (str:string) => _string2unicodes(str),
   };
   static plugins = [
     "glyph",

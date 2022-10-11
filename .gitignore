@@ -3,3 +3,5 @@ npm-debug.log
 /node_modules
 fonts/dest*
 /coverage
+index.js
+cli.js

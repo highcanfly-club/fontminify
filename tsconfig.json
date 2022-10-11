@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "ES6",
+        "moduleResolution": "Node",
+        "target": "ES6",
+        "strictNullChecks": true,
+        "strictFunctionTypes": true
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*"
+    ]
+}
