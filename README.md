@@ -1,25 +1,25 @@
 
-# fontminify (just a minimal change to [original](https://github.com/ecomfe/fontmin))
+# @sctg/fontminify (just a minimal change to [original](https://github.com/ecomfe/fontmin))
 **Minify font seamlessly**
 
-[![NPM version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads][downloads-image]][npm-url]
-[![Dependencies][dep-image]][dep-url]
-[![Font support][font-image]][font-url]
+![npm](https://img.shields.io/npm/v/@sctg/fontminify)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/highcanfly-club/fontminify/Publish%20to%20NPMJS)
+![npm](https://img.shields.io/npm/dw/@sctg/fontminify)
+![GitHub](https://img.shields.io/github/license/highcanfly-club/fontminify)
+
 
 ## Original homepage
 
+- [English](http://ecomfe.github.io/fontmini/en)
 - [简体中文](http://ecomfe.github.io/fontmin/)
 - [繁體中文](http://ecomfe.github.io/fontmini/tw)
 - [日本語](http://ecomfe.github.io/fontmini/jp)
 - [한국어](http://ecomfe.github.io/fontmini/kr)
-- [English](http://ecomfe.github.io/fontmini/en)
 
 ## Install
 
 ```sh
-$ npm install --save fontminify
+$ npm install --save @sctg/fontminify
 ```
 
 ## Usage
@@ -136,9 +136,9 @@ The following plugins are bundled with fontminify:
 Compress ttf by glyph.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.glyph({ 
         text: '天地玄黄 宇宙洪荒',
         hinting: false         // keep ttf hint info (fpgm, prep, cvt). default = true
@@ -150,9 +150,9 @@ var fontminify = new Fontimify()
 Convert ttf to eot.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2eot());
 ```
 
@@ -161,9 +161,9 @@ var fontminify = new Fontimify()
 Convert ttf to woff.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2woff({
         deflate: true           // deflate woff. default = false
     }));
@@ -174,9 +174,9 @@ var fontminify = new Fontimify()
 Convert ttf to woff2.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2woff2());
 ```
 
@@ -187,10 +187,10 @@ Convert ttf to svg.
 you can use [imagemin-svgo](https://github.com/imagemin/imagemin-svgo) to compress svg:
 
 ```js
-var Fontimify = require('fontminify');
-var svgo = require('imagemin-svgo');
+import svgo from 'imagemin-svgo'
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.ttf2svg())
     .use(svgo());
 
@@ -201,27 +201,27 @@ var fontminify = new Fontimify()
 Generate css from ttf, often used to make iconfont.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.css({
-        fontPath: './',         // location of font file 
-        base64: true,           // inject base64 data:application/x-font-ttf; (gzip font with css). 
-                                // default = false
-        glyph: true,            // generate class for each glyph. default = false
-        iconPrefix: 'my-icon',  // class prefix, only work when glyph is `true`. default to "icon"
-        fontFamily: 'myfont',   // custom fontFamily, default to filename or get from analysed ttf file
-        asFileName: false,      // rewrite fontFamily as filename force. default = false
-        local: true             // boolean to add local font. default = false
-        tpl: '[fontminify-dir]/lib/font-face.tpl' // an alternative css template
+        fontPath: './',                             // location of font file 
+        base64: true,                               // inject base64 data:application/x-font-ttf; (gzip font with css). 
+                                                    // default = false
+        glyph: true,                                // generate class for each glyph. default = false
+        iconPrefix: 'my-icon',                      // class prefix, only work when glyph is `true`. default to "icon"
+        fontFamily: 'myfont',                       // custom fontFamily, default to filename or get from analysed ttf file
+        asFileName: false,                          // rewrite fontFamily as filename force. default = false
+        local: true,                                // boolean to add local font. default = false
+        tpl: '[fontminify-dir]/lib/font-face.tpl'   // an alternative css template (default internal one)
     }));
 ```
 
 Alternatively, a transform function can be passed as `fontFamily` option.
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .use(Fontimify.css({
         // ...
         fontFamily: function(fontInfo, ttf) {
@@ -236,9 +236,9 @@ var fontminify = new Fontimify()
 Convert font format svg to ttf.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .src('font.svg')
     .use(Fontimify.svg2ttf());
 ```
@@ -250,9 +250,9 @@ Concat svg files to a ttf, just like css sprite.
 awesome work with [css](#css) plugin:
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .src('svgs/*.svg')
     .use(Fontimify.svgs2ttf('font.ttf', {fontName: 'iconfont'}))
     .use(Fontimify.css({
@@ -265,9 +265,9 @@ var fontminify = new Fontimify()
 Convert otf to ttf.
 
 ```js
-var Fontimify = require('fontminify');
+import Fontminify from '@sctg/fontminify'
 
-var fontminify = new Fontimify()
+const fontminify = new Fontimify()
     .src('fonts/*.otf')
     .use(Fontimify.otf2ttf());
 ```
@@ -335,18 +335,5 @@ $ text=`phantom-fetch http://www.chinaw3c.org` && fontminify -t "$text" font.ttf
 
 ## License
 
-MIT © [fontminify](https://raw.githubusercontent.com/ecomfe/fontminify/master/LICENSE)
+MIT © [Ronan Le Meillat / ecomfe](https://raw.githubusercontent.com/highcanfly-club/fontminify/master/LICENSE)
 
-
-[downloads-image]: http://img.shields.io/npm/dm/fontminify.svg
-[npm-url]: https://npmjs.org/package/fontminify
-[npm-image]: http://img.shields.io/npm/v/fontminify.svg
-
-[travis-url]: https://travis-ci.org/ecomfe/fontminify
-[travis-image]: http://img.shields.io/travis/ecomfe/fontminify.svg
-
-[dep-url]: https://david-dm.org/ecomfe/fontminify
-[dep-image]: http://img.shields.io/david/ecomfe/fontminify.svg
-
-[font-image]: https://img.shields.io/badge/font-eonway-blue.svg
-[font-url]: http://weibo.com/eonway
