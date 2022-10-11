@@ -1,25 +1,25 @@
 
-# fontminify (just a minimal change to [original](https://github.com/ecomfe/fontmin))
+# @sctg/fontminify (just a minimal change to [original](https://github.com/ecomfe/fontmin))
 **Minify font seamlessly**
 
-[![NPM version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads][downloads-image]][npm-url]
-[![Dependencies][dep-image]][dep-url]
-[![Font support][font-image]][font-url]
+![npm](https://img.shields.io/npm/v/@sctg/fontminify)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/highcanfly-club/fontminify/Publish%20to%20NPMJS)
+![npm](https://img.shields.io/npm/dw/@sctg/fontminify)
+![GitHub](https://img.shields.io/github/license/highcanfly-club/fontminify)
+
 
 ## Original homepage
 
+- [English](http://ecomfe.github.io/fontmini/en)
 - [简体中文](http://ecomfe.github.io/fontmin/)
 - [繁體中文](http://ecomfe.github.io/fontmini/tw)
 - [日本語](http://ecomfe.github.io/fontmini/jp)
 - [한국어](http://ecomfe.github.io/fontmini/kr)
-- [English](http://ecomfe.github.io/fontmini/en)
 
 ## Install
 
 ```sh
-$ npm install --save fontminify
+$ npm install --save @sctg/fontminify
 ```
 
 ## Usage
@@ -335,18 +335,5 @@ $ text=`phantom-fetch http://www.chinaw3c.org` && fontminify -t "$text" font.ttf
 
 ## License
 
-MIT © [fontminify](https://raw.githubusercontent.com/ecomfe/fontminify/master/LICENSE)
+MIT © [Ronan Le Meillat / ecomfe](https://raw.githubusercontent.com/highcanfly-club/fontminify/master/LICENSE)
 
-
-[downloads-image]: http://img.shields.io/npm/dm/fontminify.svg
-[npm-url]: https://npmjs.org/package/fontminify
-[npm-image]: http://img.shields.io/npm/v/fontminify.svg
-
-[travis-url]: https://travis-ci.org/ecomfe/fontminify
-[travis-image]: http://img.shields.io/travis/ecomfe/fontminify.svg
-
-[dep-url]: https://david-dm.org/ecomfe/fontminify
-[dep-image]: http://img.shields.io/david/ecomfe/fontminify.svg
-
-[font-image]: https://img.shields.io/badge/font-eonway-blue.svg
-[font-url]: http://weibo.com/eonway
