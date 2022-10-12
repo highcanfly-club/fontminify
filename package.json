@@ -42,7 +42,7 @@
     "fontmin": "cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc || exit 0",
     "test": "mocha",
     "coverage": "nyc mocha --reporter spec --check-leaks test/"
   },
