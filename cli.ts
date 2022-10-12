@@ -2,7 +2,7 @@
 
 /**
  * @file cli
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */

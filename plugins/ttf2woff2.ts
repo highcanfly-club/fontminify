@@ -1,6 +1,6 @@
 /**
  * @file wawoff2
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */

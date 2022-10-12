@@ -1,6 +1,6 @@
 /**
  * @file util
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */

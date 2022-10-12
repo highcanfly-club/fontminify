@@ -1,6 +1,6 @@
 /**
  * @file fontmin
- * @author junmer
+ * @author junmer eltorio
  */
 
 import combine from "stream-combiner";
@@ -18,7 +18,7 @@ import _ttf2eot from "./plugins/ttf2eot.js";
 import _ttf2svg from "./plugins/ttf2svg.js";
 import _ttf2woff from "./plugins/ttf2woff.js";
 import _ttf2woff2 from "./plugins/ttf2woff2.js";
-import * as File from 'vinyl'
+// import * as File from 'vinyl'
 import {
   getFontFolder as _getFontFolder,
   getFonts as _getFonts,
@@ -39,7 +39,7 @@ type FontminifyPlugin =
   | typeof Fontminify.ttf2woff
   | typeof Fontminify.ttf2woff2
   | stream.Transform;
-type ProbableAsSrc = string[] | string | Buffer;
+type FontminifyAsSrc = string[] | string | Buffer;
 
 export interface PluginCloneOption {
   clone?: boolean;
@@ -68,11 +68,11 @@ export interface PluginFromSVGOption extends PluginHintOption {
 export interface FontInfo {
   fontFile: string;
   fontPath: string;
-  base64: boolean|string;
+  base64: boolean | string;
   glyph: boolean;
   iconPrefix: string;
   local: boolean;
-  fontFamily?:string;
+  fontFamily?: string;
 }
 
 export interface CssOption {
@@ -94,10 +94,13 @@ export interface GlyphOption {
   use?: FontminifyPlugin;
 }
 
+export interface FontminifyFile extends File {
+  _contents: stream.Readable;
+};
 /**
  * Initialize Fontminify
  */
-class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
+class Fontminify<SrcType extends FontminifyAsSrc> extends EventEmitter {
   streams: stream[];
   _src: any;
   _dest: any;
@@ -138,7 +141,9 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
    * Add a plugin to the middleware stack
    */
   use(plugin: FontminifyPlugin): Fontminify<SrcType> {
-    this.streams.push(typeof plugin === "function" ? (plugin as any)() : plugin);
+    this.streams.push(
+      typeof plugin === "function" ? (plugin as any)() : plugin
+    );
     return this;
   }
   /**
@@ -147,11 +152,15 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
   run(
     cb: (
       err: Error,
-      files: Array<File>,
+      files: Array<FontminifyFile>,
       stream: stream.Stream
     ) => void
   ): stream {
-    cb = cb || (() => {return});
+    cb =
+      cb ||
+      (() => {
+        return;
+      });
 
     const stream = this.createStream();
 
@@ -180,7 +189,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
     }
 
     if (this.dest()) {
-      this.streams.push(vfs.dest(...this.dest() as any));
+      this.streams.push(vfs.dest(...(this.dest() as any)));
     }
 
     return combine(this.streams);
@@ -197,7 +206,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
       return bufferToVinyl.stream(this._src[0]);
     }
 
-    return vfs.src(...this.src() as any);
+    return vfs.src(...(this.src() as any));
   }
   static glyph = (opts: GlyphOption): stream.Transform => _glyph(opts);
   static ttf2eot = (opts?: PluginCloneOption): stream.Transform =>
