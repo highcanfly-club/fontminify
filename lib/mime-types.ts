@@ -1,6 +1,6 @@
 /**
  * @file mine types
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */

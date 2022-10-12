@@ -1,6 +1,6 @@
 /**
  * @file util
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */
@@ -14,9 +14,8 @@ import codePoints from 'code-points';
 /**
  * getFontFolder
  *
- * @return {string} fontFolder
  */
-function getFontFolder() {
+function getFontFolder():string {
     return path.resolve({
         win32: '/Windows/fonts',
         darwin: '/Library/Fonts',
@@ -27,10 +26,8 @@ function getFontFolder() {
 /**
  * getFonts
  *
- * @param  {string} path path
- * @return {Array}      fonts
  */
-function getFonts() {
+function getFonts():string[] {
     return fs.readdirSync(getFontFolder());
 }
 
@@ -40,10 +37,10 @@ function getFonts() {
  * @see https://msdn.microsoft.com/zh-cn/library/ie/2yfce773
  * @see http://www.unicode.org/charts/
  *
- * @param  {string} str target text
- * @return {string}     pure text
+ * @param  str target text
+ * @return     pure text
  */
-function getPureText(str) {
+function getPureText(str:string) {
 
     // fix space
     const emptyTextMap = {};
@@ -73,16 +70,10 @@ function getPureText(str) {
 /**
  * getUniqText
  *
- * @deprecated since version 0.9.9
- *
- * @param  {string} str target text
- * @return {string}     uniq text
  */
-function getUniqText(str) {
-    return _.uniq(
-        str.split('')
-    ).join('');
-}
+ function getUniqText(str:string) {
+    return [...new Set(str.split(''))].join('')
+  }
 
 
 /**
@@ -116,12 +107,10 @@ function getSubsetText(opts) {
 /**
  * string to unicodes
  *
- * @param  {string} str string
- * @return {Array}      unicodes
  */
-function string2unicodes(str) {
-    return _.uniq(codePoints(str));
-}
+ function string2unicodes(str:string) {
+    return [...new Set(codePoints(str)as number[])];
+  }
 
 export {getFontFolder};
 export {getFonts};

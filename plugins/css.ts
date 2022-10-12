@@ -1,20 +1,28 @@
 /**
  * @file css
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */
 import _ from "lodash";
 
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 import isTtf from "is-ttf";
 import through from "through2";
 import replaceExt from "replace-ext";
 import {b2a} from "b3b";
 import {fileURLToPath} from 'url';
+import type { CssOption, FontInfo } from "../index.js";
+import { TTF } from "fonteditor-core/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+type Glyph = {
+  code: string,
+  codeName: string,
+  name: string,
+}
 /**
  * listUnicode
  *
@@ -35,8 +43,8 @@ function listUnicode(unicode) {
  * @param {ttfObject} ttf ttfObject
  * @return {Object} icon obj
  */
-function getGlyfList(ttf) {
-  const glyfList = [];
+function getGlyfList(ttf:TTF.TTFObject) {
+  const glyfList = [] as Glyph[];
 
   // exclude empty glyf
   const filtered = ttf.glyf.filter(g => {
@@ -92,18 +100,12 @@ function getFontFamily(fontInfo, ttf, opts) {
 /**
  * css fontmin plugin
  *
- * @param {Object} opts opts
- * @param {boolean=} opts.glyph     generate class for each glyph. default = false
- * @param {boolean=} opts.base64    inject base64
- * @param {string=} opts.iconPrefix icon prefix
- * @param {string=} opts.filename  set filename
- * @param {string=} opts.tpl  set alternative template
  * @param {(string|FontFamilyTransform)=} opts.fontFamily fontFamily
  * @return {Object} stream.Transform instance
  * @api public
  */
-export default opts => {
-  opts = opts || {};
+export default (_opts?: CssOption) => {
+  const opts = _opts || {};
 
   return through.ctor(
     {
@@ -138,11 +140,11 @@ export default opts => {
       const fontInfo = {
         fontFile: fontFile,
         fontPath: "",
-        base64: "",
+        base64: false,
         glyph: false,
         iconPrefix: "icon",
         local: false,
-      };
+      } as FontInfo;
 
       // opts
       _.extend(fontInfo, opts);
@@ -174,9 +176,9 @@ export default opts => {
       }
 
       // local
-      if (fontInfo.local === true) {
-        fontInfo.local = fontInfo.fontFamily;
-      }
+      // if (fontInfo.local === true) {
+      //   fontInfo.local = fontInfo.fontFamily as string;
+      // }
 
       // render
       const output = _.attempt(data => {

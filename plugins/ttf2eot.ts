@@ -1,18 +1,35 @@
 /**
- * @file wawoff2
- * @author junmer
+ * @file ttf2eot
+ * @author junmer eltorio
  */
 
 /* eslint-env node */
-import through from 'through2';
 
-import replaceExt from 'replace-ext';
-import _ from 'lodash';
-import ttf2woff2 from 'ttf2woff2';
 import isTtf from 'is-ttf';
 
+import through from 'through2';
+import fe from 'fonteditor-core';
+import {b2ab} from 'b3b';
+import {ab2b} from 'b3b';
+import replaceExt from 'replace-ext';
+import _ from 'lodash';
+const ttf2eot = fe.ttf2eot
+
+function compileTtf(buffer, cb) {
+    let output;
+    try {
+        output = ab2b(ttf2eot(b2ab(buffer)));
+    }
+    catch (ex) {
+        cb(ex);
+    }
+
+    output && cb(null, output);
+}
+
+
 /**
- * wawoff2 fontmin plugin
+ * ttf2eot fontmin plugin
  *
  * @param {Object} opts opts
  * @return {Object} stream.Transform instance
@@ -49,21 +66,21 @@ export default opts => {
             this.push(file.clone(false));
         }
 
-        // ttf2woff2
-        let ouput;
-        try {
-            ouput = ttf2woff2(file.contents);
-        }
-        catch (ex) {
-            cb(ex, file);
-        }
+        // replace ext
+        file.path = replaceExt(file.path, '.eot');
 
-        if (ouput) {
-            file.path = replaceExt(file.path, '.woff2');
-            file.contents = ouput;
+        compileTtf(file.contents, (err, buffer) => {
+
+            if (err) {
+                cb(err);
+                return;
+            }
+
+            file.contents = buffer;
             cb(null, file);
-        }
+        });
 
     });
 
 };
+

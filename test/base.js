@@ -1,6 +1,6 @@
 /**
  * @file  fontmin base
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */
@@ -9,7 +9,7 @@ import {expect} from 'chai';
 
 import path from 'path';
 import bufferToVinyl from 'buffer-to-vinyl';
-import Fontmin from '../index.js';
+import Fontmin from '../dist/index.js';
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

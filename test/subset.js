@@ -1,6 +1,6 @@
 /**
  * @file  fontmin subset
- * @author junmer
+ * @author junmer eltorio
  */
 
 /* eslint-env node */
@@ -12,7 +12,7 @@ import fs, { cp } from 'fs';
 import path from 'path';
 import clean from 'gulp-clean';
 import isTtf from 'is-ttf';
-import Fontminify from '../index.js';
+import Fontminify from '../dist/index.js';
 import fe from 'fonteditor-core';
 import {b2ab} from 'b3b';
 import {fileURLToPath} from 'url';

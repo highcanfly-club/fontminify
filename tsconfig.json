@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "target": "ES6",
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "declaration": true,
+    "noEmit": false,
+    "noEmitOnError": false,
+    "allowSyntheticDefaultImports": true,
+    "outDir":"dist"
+  },
+  "exclude": ["node_modules", "**/node_modules", "dist"]
+}

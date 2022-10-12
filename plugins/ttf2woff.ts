@@ -1,6 +1,6 @@
 /**
- * @file ttf2eot
- * @author junmer
+ * @file ttf2woff
+ * @author junmer eltorio
  */
 
 /* eslint-env node */
@@ -12,13 +12,31 @@ import fe from 'fonteditor-core';
 import {b2ab} from 'b3b';
 import {ab2b} from 'b3b';
 import replaceExt from 'replace-ext';
+import {deflate} from 'pako';
 import _ from 'lodash';
-const ttf2eot = fe.ttf2eot
+import type {Transform} from 'stream'
+import type {PluginCloneOption} from '../index.js'
 
-function compileTtf(buffer, cb) {
+const ttf2woff = fe.ttf2woff
+
+function compileTtf(buffer, options, cb) {
     let output;
+    const ttf2woffOpts = {} as any;
+
+    if (options.deflate) {
+        ttf2woffOpts.deflate = input => {
+            return deflate(Uint8Array.from(input));
+        };
+    }
+
     try {
-        output = ab2b(ttf2eot(b2ab(buffer)));
+        output = ab2b(
+            // fix: have problem in some android device, close deflate
+            ttf2woff(
+                b2ab(buffer),
+                ttf2woffOpts
+            )
+        );
     }
     catch (ex) {
         cb(ex);
@@ -27,17 +45,13 @@ function compileTtf(buffer, cb) {
     output && cb(null, output);
 }
 
-
 /**
- * ttf2eot fontmin plugin
- *
- * @param {Object} opts opts
- * @return {Object} stream.Transform instance
+ * ttf2woff fontmin plugin
  * @api public
  */
-export default opts => {
+export default (_opts?:PluginCloneOption): Transform => {
 
-    opts = _.extend({clone: true}, opts);
+    const opts = _.extend({clone: true}, _opts);
 
     return through.ctor({
         objectMode: true
@@ -67,9 +81,9 @@ export default opts => {
         }
 
         // replace ext
-        file.path = replaceExt(file.path, '.eot');
+        file.path = replaceExt(file.path, '.woff');
 
-        compileTtf(file.contents, (err, buffer) => {
+        compileTtf(file.contents, opts, (err, buffer) => {
 
             if (err) {
                 cb(err);
