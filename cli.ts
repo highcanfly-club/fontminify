@@ -129,7 +129,7 @@ function run(src, dest) {
 
         if (!process.stdout.isTTY) {
             files.forEach(file => {
-                process.stdout.write(file.contents?.toString() as string);
+                process.stdout.write((file as any).contents);
             });
         }
 

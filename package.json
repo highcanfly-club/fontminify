@@ -1,9 +1,9 @@
 {
   "name": "@sctg/fontminify",
-  "version": "1.0.3-beta.2",
+  "version": "1.0.3-beta.3",
   "description": "Minify font seamlessly, font subsetter, webfont (eot, woff, svg) converter.",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "private": false,
   "keywords": [
@@ -42,8 +42,8 @@
     "fontmin": "cli.js"
   },
   "scripts": {
-    "build": "tsc || exit 0",
-    "prepublish": "tsc || exit 0",
+    "build": "tsc ; cp lib/font-face.tpl dist/lib/ || exit 0",
+    "prepublish": "npm run build",
     "test": "mocha",
     "coverage": "nyc mocha --reporter spec --check-leaks test/"
   },
