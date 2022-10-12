@@ -88,6 +88,6 @@
     "test": "test"
   },
   "publishConfig": {
-    "tag": "beta"
+    "tag": "beta.2"
   }
 }
