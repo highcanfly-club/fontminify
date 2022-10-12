@@ -43,6 +43,7 @@
   },
   "scripts": {
     "build": "tsc || exit 0",
+    "prepublish": "tsc || exit 0",
     "test": "mocha",
     "coverage": "nyc mocha --reporter spec --check-leaks test/"
   },
