@@ -274,6 +274,9 @@ const fontminify = new Fontimify()
 
 ## CLI
 
+The cli is a work in progress and may produce unexpected results.
+
+
 ```bash
 $ npm install -g fontminify
 ```

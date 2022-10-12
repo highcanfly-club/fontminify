@@ -5,7 +5,6 @@
 
 import combine from "stream-combiner";
 import * as stream from "stream";
-import { Transform } from "stream";
 import concat from "concat-stream";
 import { EventEmitter } from "events";
 import bufferToVinyl from "buffer-to-vinyl";
@@ -126,12 +125,12 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
   /**
    * Get or set the destination folder
    */
-  dest(dir?: string): Fontminify<SrcType> {
+  dest(...dir: any): Fontminify<SrcType> {
     if (!arguments.length) {
       return this._dest;
     }
 
-    this._dest = arguments;
+    this._dest = dir;
     return this;
   }
 
@@ -139,7 +138,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
    * Add a plugin to the middleware stack
    */
   use(plugin: FontminifyPlugin): Fontminify<SrcType> {
-    this.streams.push(typeof plugin === "function" ? plugin() : plugin);
+    this.streams.push(typeof plugin === "function" ? (plugin as any)() : plugin);
     return this;
   }
   /**
@@ -152,7 +151,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
       stream: stream.Stream
     ) => void
   ): stream {
-    cb = cb || (() => {});
+    cb = cb || (() => {return});
 
     const stream = this.createStream();
 
@@ -181,7 +180,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
     }
 
     if (this.dest()) {
-      this.streams.push(vfs.dest(...this.dest()));
+      this.streams.push(vfs.dest(...this.dest() as any));
     }
 
     return combine(this.streams);
@@ -198,7 +197,7 @@ class Fontminify<SrcType extends ProbableAsSrc> extends EventEmitter {
       return bufferToVinyl.stream(this._src[0]);
     }
 
-    return vfs.src(...this.src());
+    return vfs.src(...this.src() as any);
   }
   static glyph = (opts: GlyphOption): stream.Transform => _glyph(opts);
   static ttf2eot = (opts?: PluginCloneOption): stream.Transform =>

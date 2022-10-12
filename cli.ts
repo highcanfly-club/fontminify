@@ -172,5 +172,5 @@ if (process.stdin.isTTY) {
     run(src, dest);
 }
 else {
-    stdin.buffer(run);
+    stdin.buffer();
 }
