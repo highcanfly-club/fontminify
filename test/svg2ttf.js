@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import clean from 'gulp-clean';
 import isTtf from 'is-ttf';
-import Fontmin from '../index.js';
+import Fontmin from '../dist/index.js';
 import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);

@@ -18,7 +18,7 @@ import isEot from 'is-eot';
 import isWoff from 'is-woff';
 import isWoff2 from 'is-woff2';
 import isSvg from 'is-svg';
-import Fontminify from '../index.js';
+import Fontminify from '../dist/index.js';
 import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
