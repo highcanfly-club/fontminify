@@ -1,6 +1,6 @@
 {
   "name": "@sctg/fontminify",
-  "version": "1.0.3-beta",
+  "version": "1.0.3-beta.2",
   "description": "Minify font seamlessly, font subsetter, webfont (eot, woff, svg) converter.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -88,6 +88,6 @@
     "test": "test"
   },
   "publishConfig": {
-    "tag": "beta.2"
+    "tag": "beta"
   }
 }
