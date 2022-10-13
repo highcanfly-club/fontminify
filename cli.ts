@@ -9,12 +9,12 @@
 
 'use strict';
 
-import * as fs from 'fs';
+import fs from 'fs';
 import meow from 'meow';
-import * as path from 'path';
+import path from 'path';
 import stdin from 'get-stdin';
 import Fontmin from './index.js';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 const cli = meow([
     'Usage',
