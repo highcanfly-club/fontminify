@@ -9,12 +9,18 @@
 
 'use strict';
 
-import * as fs from 'fs';
+import fs from 'fs';
 import meow from 'meow';
-import * as path from 'path';
+import path from 'path';
 import stdin from 'get-stdin';
 import Fontmin from './index.js';
-import * as _ from 'lodash';
+import _ from 'lodash';
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const isDist = (__dirname.match(/([^\/]*)*$/)||['',''])[1] === 'dist'
+let { version } = JSON.parse(fs.readFileSync(new URL(path.join(__dirname, (isDist ? '..' : '') +"/package.json"), import.meta.url)).toString());
 
 const cli = meow([
     'Usage',
@@ -76,7 +82,7 @@ const cli = meow([
 
 // version
 if (cli.flags.version) {
-    console.log('1.0.3');
+    console.log(version);
     process.exit(0);
 }
 
@@ -95,7 +101,6 @@ function isFile(path) {
 
 
 function run(src, dest) {
-
     cli.flags.showTime && console.time('fontmin use');
 
     const pluginOpts = _.extend(
@@ -137,7 +142,7 @@ function run(src, dest) {
     });
 }
 
-if (process.stdin.isTTY) {
+if (true) {
     let src = cli.input;
     let dest;
 
